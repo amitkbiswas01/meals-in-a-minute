@@ -1,0 +1,8 @@
+{
+    "cSpell.words": [
+        "ENVFILE",
+        "dotenv",
+        "getenv"
+    ],
+    "python.pythonPath": "venv/bin/python"
+}
