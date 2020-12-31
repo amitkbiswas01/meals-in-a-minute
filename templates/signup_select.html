@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Select Type {% endblock title %}
+
+{% block content %}
+<section class="container d-flex justify-content-center align-items-center" style="height: 90vh">
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="card mr-4" style="width: 15rem;">
+            <img src="{% static 'img/seller.jpg' %}" class="card-img-top" alt="seller image">
+            <div class="card-body">
+                <h5 class="card-title">Seller</h5>
+                <p class="card-text">Share your cooking talent with everyone, become the number 1 home cook with meals
+                    in a minute!</p>
+                <a href="{% url 'seller_signup' %}" class="btn btn-danger">Become a Seller</a>
+            </div>
+        </div>
+        <div class="card" style="width: 15rem;">
+            <img src="{% static 'img/buyer.jpg' %}" class="card-img-top" alt="buyer image">
+            <div class="card-body">
+                <h5 class="card-title">Buyer</h5>
+                <p class="card-text">Taste of home in minutes Order your favorite homemade food right with meals in a
+                    minute!</p>
+                <a href="{% url 'buyer_signup' %}" class="btn btn-danger">Become a Buyer</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

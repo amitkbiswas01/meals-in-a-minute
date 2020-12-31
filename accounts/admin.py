@@ -18,18 +18,15 @@ class CustomUserAdmin(UserAdmin):
     list_display = (
         "full_name",
         "email",
+        "phone_no",
         "created_at",
         "is_staff",
         "is_active",
         "is_superuser",
-        "is_seller",
-        "is_buyer",
     )
     list_filter = (
         "is_staff",
         "is_active",
-        "is_seller",
-        "is_buyer",
     )
 
     """CustomUserChangeForm fields"""
@@ -41,8 +38,6 @@ class CustomUserAdmin(UserAdmin):
                 "fields": (
                     "is_staff",
                     "is_active",
-                    "is_seller",
-                    "is_buyer",
                 )
             },
         ),
@@ -60,8 +55,6 @@ class CustomUserAdmin(UserAdmin):
                     "password2",
                     "is_staff",
                     "is_active",
-                    "is_seller",
-                    "is_buyer",
                 ),
             },
         ),
@@ -85,10 +78,9 @@ class SellerProfileAdmin(admin.ModelAdmin):
 
     list_display = (
         "get_full_name",
-        "phone_no",
         "location",
         "company_name",
-        "food_type",
+        "food_category",
     )
 
     def get_full_name(self, instance):
@@ -99,12 +91,7 @@ class SellerProfileAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             "Identification",
-            {
-                "fields": (
-                    "user",
-                    "phone_no",
-                )
-            },
+            {"fields": ("user",)},
         ),
         (
             "General Information",
@@ -112,7 +99,7 @@ class SellerProfileAdmin(admin.ModelAdmin):
                 "fields": (
                     "location",
                     "company_name",
-                    "food_type",
+                    "food_category",
                 )
             },
         ),
@@ -120,12 +107,7 @@ class SellerProfileAdmin(admin.ModelAdmin):
     add_fieldsets = (
         (
             "Identification",
-            {
-                "fields": (
-                    "user",
-                    "phone_no",
-                )
-            },
+            {"fields": ("user",)},
         ),
         (
             "General Information",
@@ -133,7 +115,7 @@ class SellerProfileAdmin(admin.ModelAdmin):
                 "fields": (
                     "location",
                     "company_name",
-                    "food_type",
+                    "food_category",
                 )
             },
         ),
@@ -143,7 +125,7 @@ class SellerProfileAdmin(admin.ModelAdmin):
         "user__full_name",
         "location",
         "company_name",
-        "food_type",
+        "food_category",
     )
 
     ordering = [
@@ -162,6 +144,7 @@ class BuyerProfileAdmin(admin.ModelAdmin):
     list_display = (
         "get_full_name",
         "address",
+        # "last_order",
     )
 
     def get_full_name(self, instance):

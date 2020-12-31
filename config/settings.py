@@ -22,8 +22,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # custom apps
-    "accounts",
+    "django.contrib.sites",
+    # ------- THIRD PARTY APPS ------- #
+    "crispy_forms",
+    "allauth",
+    "allauth.account",
+    # ------- CREATED APPS ------- #
+    "accounts.apps.AccountsConfig",
+    "miam.apps.MiamConfig",
 ]
 
 MIDDLEWARE = [
@@ -41,7 +47,9 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            Path.joinpath(BASE_DIR, "templates"),
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -86,8 +94,37 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-"""Static files(JS, CSS, Images) location"""
-STATIC_URL = "/static/"
-
 """CustomUser as default AUTH model"""
 AUTH_USER_MODEL = "accounts.User"
+
+"""allauth Config"""
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = (
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+)
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"
+
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+
+ACCOUNT_SESSION_REMEMBER = True
+
+
+"""Static files(JS, CSS, Images) location"""
+STATIC_URL = "/static/"
+STATICFILES_DIRS = [
+    Path.joinpath(BASE_DIR, "static"),
+]
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+CRISPY_TEMPLATE_PACK = "bootstrap4"
