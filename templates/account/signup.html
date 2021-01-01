@@ -5,7 +5,6 @@
 {% block content %}
 <section class="container d-flex justify-content-center align-items-center" style="min-height: 90vh">
     <div class="my-5" style="width: 35rem;">
-        <h1>{{usertype}}</h1>
         {% if is_seller %}
         <form method="post">
             {% csrf_token %}
@@ -36,7 +35,7 @@
                 </div>
             </div>
             {{ form.company_name|as_crispy_field }}
-            <button type="submit" class="w-100 btn btn-primary">Signup</button>
+            <button type="submit" class="w-100 btn btn-danger">Sign up</button>
         </form>
         {% else %}
         <h1 class="w-100 text-center mb-4">Register as Buyer</h1>
@@ -60,7 +59,7 @@
                 </div>
             </div>
             {{ form.address|as_crispy_field }}
-            <button type="submit" class="w-100 btn btn-primary">Sign up</button>
+            <button type="submit" class="w-100 btn btn-danger">Sign up</button>
         </form>
         {% endif %}
     </div>
