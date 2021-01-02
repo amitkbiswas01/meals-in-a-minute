@@ -20,18 +20,19 @@ class CustomUserAdmin(UserAdmin):
         "email",
         "phone_no",
         "created_at",
+        "user_type",
         "is_staff",
         "is_active",
         "is_superuser",
     )
     list_filter = (
+        "user_type",
         "is_staff",
-        "is_active",
     )
 
     """CustomUserChangeForm fields"""
     fieldsets = (
-        ("Information", {"fields": ("full_name", "email", "password")}),
+        ("Information", {"fields": ("full_name", "email", "password", "user_type")}),
         (
             "Permission",
             {
@@ -53,8 +54,10 @@ class CustomUserAdmin(UserAdmin):
                     "email",
                     "password1",
                     "password2",
+                    "user_type",
                     "is_staff",
                     "is_active",
+
                 ),
             },
         ),

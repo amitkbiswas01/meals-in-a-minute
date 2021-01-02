@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete{% endblock %}
+{% block content %}
+<section class="container d-flex justify-content-center align-items-center" style="height: 90vh">
+    <div style="width: 25rem;">
+        <h1 class="text-danger"><strong>Are you sure?</strong></h1>
+        <h4>You are going to delete the item : <strong>{{object}}</strong></h4>
+        <form method="post">
+            {% csrf_token %}
+            <input class="btn btn-danger" type="submit" value="Confirm">
+        </form>
+    </div>
+</section>
+{% endblock content %}

@@ -5,13 +5,17 @@
         "Rangpur",
         "Sylhet",
         "asgi",
+        "createad",
+        "deletead",
+        "detailad",
         "dotenv",
         "endcomment",
         "getenv",
         "miam",
         "nofollow",
         "signup",
-        "stylesheet"
+        "stylesheet",
+        "updatead"
     ],
     "python.pythonPath": "venv/bin/python"
 }

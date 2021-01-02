@@ -21,6 +21,11 @@ class User(AbstractBaseUser, PermissionsMixin):
         message=_("Invalid Phone Number"),
     )
     phone_no = models.CharField(validators=[phone_regex], max_length=17, blank=True)
+    user_type = models.CharField(
+        _("User Type"),
+        max_length=50,
+        choices=(("seller", "seller"), ("buyer", "buyer")),
+    )
 
     created_at = models.DateTimeField(_("Joined"), auto_now_add=True)
 

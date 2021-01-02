@@ -62,6 +62,7 @@ class SellerSignupForm(SignupForm):
     def custom_signup(self, request, user):
         user.full_name = self.cleaned_data["full_name"]
         user.phone_no = self.cleaned_data["phone_no"]
+        user.user_type = "seller"
 
         user.save()
 
@@ -91,6 +92,7 @@ class BuyerSignupForm(SignupForm):
 
         user.full_name = self.cleaned_data["full_name"]
         user.phone_no = self.cleaned_data["phone_no"]
+        user.user_type = "buyer"
 
         user.save()
         BuyerProfile(
