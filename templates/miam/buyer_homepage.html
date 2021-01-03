@@ -1,9 +1,100 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %} Buyer {% endblock title %}
 
 {% block content %}
-<section class="container d-flex justify-content-center align-items-center" style="height: 90vh">
-    <h1>You are logged in as a Buyer!</h1>
+<section class="container shadow pt-2 pb-5 my-5 bg-white rounded-lg">
+    <div class="row">
+        <div class="col-4 border-right">
+            <div class="w-75 mt-5 mx-auto">
+                <h6>SEARCH BY <strong class="text-danger">LOCATION</strong></h6>
+            </div>
+            <div class="list-group w-75 mt-2 mx-auto">
+                <a href="{% url 'search_listad' 'Dhaka'  %}"
+                    class="list-group-item list-group-item-action list-group-item-secondary">Dhaka</a>
+                <a href="{% url 'search_listad' 'Chattogram'  %}"
+                    class="list-group-item list-group-item-action">Chattogram</a>
+                <a href="{% url 'search_listad' 'Khulna'  %}"
+                    class="list-group-item list-group-item-action list-group-item-secondary">Khulna</a>
+                <a href="{% url 'search_listad' 'Rajshahi'  %}"
+                    class="list-group-item list-group-item-action">Rajshahi</a>
+                <a href="{% url 'search_listad' 'Sylhet'  %}"
+                    class="list-group-item list-group-item-action list-group-item-secondary">Sylhet</a>
+                <a href="{% url 'search_listad' 'Barisal'  %}"
+                    class="list-group-item list-group-item-action">Barisal</a>
+                <a href="{% url 'search_listad' 'Rangpur'  %}"
+                    class="list-group-item list-group-item-action list-group-item-secondary">Rangpur</a>
+                <a href="{% url 'search_listad' 'Mymensingh'  %}"
+                    class="list-group-item list-group-item-action">Mymensingh</a>
+            </div>
+            <div class="w-75 mt-5 mx-auto">
+                <h6>SEARCH BY <strong class="text-danger">CATEGORY</strong></h6>
+            </div>
+            <div class="list-group w-75 mt-2 mx-auto">
+                <a href="#" class="list-group-item list-group-item-action list-group-item-dark">Homemade Bengali
+                    Food</a>
+                <a href="#" class="list-group-item list-group-item-action">Street Food</a>
+                <a href="#" class="list-group-item list-group-item-action list-group-item-dark">Sea Food</a>
+                <a href="#" class="list-group-item list-group-item-action">Drinks and Juices</a>
+                <a href="#" class="list-group-item list-group-item-action list-group-item-dark">Sweets and Pithas</a>
+                <a href="#" class="list-group-item list-group-item-action">Cakes and Bakery</a>
+            </div>
+        </div>
+        <div class="col-8 container">
+            <div class="row">
+                <div class="col-4">
+                    <div class="pl-5 w-100 dropdown mt-5 mb-4">
+                        <a class="btn w-100 btn-danger dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            SORT BY
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" href="{% url 'listad' 'price' %}">Price</a>
+                            <a class="dropdown-item" href="{% url 'listad' 'location' %}">Location</a>
+                            <a class="dropdown-item" href="{% url 'listad' 'available_till' %}">Availability</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="mt-5 mb-4 w-100 mx-auto">
+                        <form class="w-100 form-inline" method="get" action="{% url 'search_listad' 'value'%}">
+                            <input class="w-75 form-control mr-2" type="search" value="{{searched_value}}"
+                                name="searched_value" placeholder="search by advertisement title" aria-label="Search" />
+                            <button class="w-20 btn btn-outline-danger" type="submit">Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                {% for ad in ads %}
+                <div class="card border-info mb-3" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img src="/media/{{ad.photo}}" class="card-img" alt="{{ad.title}}">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h4 class="card-title"><a class="stretched-link"
+                                        href="{% url 'detailad' ad.pk%}">{{ad.title}}</a></h4>
+                                <div
+                                    class="pr-4 pb-2 mb-2 border-bottom d-flex justify-content-between align-items-center">
+                                    <h6 class="text-secondary card-subtitle"><strong>{{ad.location}}</strong></h6>
+                                    <h6 class="card-subtitle">Price: &#x9f3;{{ad.price}}</h6>
+                                </div>
+                                <p class="text-right card-text">
+                                    <small class="text-muted">
+                                        <strong class="text-danger mr-1">Available till</strong>
+                                        {{ad.available_till}}
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </section>
 {% endblock content %}
