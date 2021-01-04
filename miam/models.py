@@ -24,7 +24,17 @@ class Advertisement(models.Model):
         ("Mymensingh", "Mymensingh"),
     )
     location = models.CharField(_("Location"), max_length=255, choices=DIVISION_CHOICES)
-    category = models.CharField(_("Food Category"), max_length=512)
+    CATEGORY_CHOICES = (
+        ("bengali_food", "Homemade Bengali Food"),
+        ("street_food", "Street Food"),
+        ("sea_food", "Sea Food"),
+        ("drinks", "Drinks and Juices"),
+        ("sweets", "Sweets and Pithas"),
+        ("bakery", "Cakes and Bakery"),
+    )
+    category = models.CharField(
+        _("Food Category"), max_length=256, choices=CATEGORY_CHOICES
+    )
     description = models.TextField(_("Description"))
     photo = models.ImageField(_("Photo"), upload_to="ads")
     available_from = models.DateTimeField(_("Available from"), auto_now_add=True)
@@ -39,3 +49,26 @@ class Advertisement(models.Model):
 
     def get_absolute_url(self):
         return reverse("advertisement_detail", kwargs={"pk": self.pk})
+
+
+class Order(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    buyer = models.ForeignKey(
+        "accounts.BuyerProfile", verbose_name=_("Buyer"), on_delete=models.CASCADE
+    )
+    advertisement = models.ForeignKey(
+        "miam.Advertisement", verbose_name=_("Advertisement"), on_delete=models.CASCADE
+    )
+    quantity = models.IntegerField(_("Quantity"))
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("order")
+        verbose_name_plural = _("orders")
+
+    def __str__(self):
+        return self.advertisement.title
+
+    def get_absolute_url(self):
+        return reverse("order_detail", kwargs={"pk": self.pk})

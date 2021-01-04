@@ -4,23 +4,35 @@ from miam.views import (
     LandingView,
     HomepageView,
     SellerHomepageView,
+    # ad views
     AdCreateView,
+    OrderCreateView,
     AdListView,
-    # SortedAdListView,
     AdDetailView,
     AdUpdateView,
     AdDeleteView,
+    # profile views
+    ProfileView,
 )
 
-urlpatterns = [
+url_misc = [
     path("", HomepageView.as_view(), name="home"),
     path("welcome/", LandingView.as_view(), name="landingpage"),
     path("sellerhome/", SellerHomepageView.as_view(), name="sellerhome"),
+]
+url_ads = [
     path("createad/", AdCreateView.as_view(), name="createad"),
+    path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
     path("listad/", AdListView.as_view(), name="listad"),
     path("listad/<str:sort_type>/", AdListView.as_view(), name="listad"),
     path("listad/search/<str:keyword>/", AdListView.as_view(), name="search_listad"),
     path("detailad/<uuid:pk>/", AdDetailView.as_view(), name="detailad"),
+    path("detailad/<uuid:pk>/<str:order>/", AdDetailView.as_view(), name="detailad"),
     path("updatead/<uuid:pk>/", AdUpdateView.as_view(), name="updatead"),
     path("deletead/<uuid:pk>/", AdDeleteView.as_view(), name="deletead"),
 ]
+url_profiles = [
+    path("detailprofile/", ProfileView.as_view(), name="profile"),
+]
+
+urlpatterns = url_misc + url_ads + url_profiles

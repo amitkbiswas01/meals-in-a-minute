@@ -1,7 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="container d-flex justify-content-center align-items-center" style="height: 90vh">
-    <h1>Welcome to Meals in a Minute!</h1>
+<section class="miambg w-100 d-flex justify-content-center align-items-center" style="height: 90vh">
+    <div class="text-light w-50 p-5 rounded-lg" style="background-color: rgba(0, 0, 0, 0.6);">
+        <h1 class="display-3 text-center"><strong>Welcome to Meals in a Minute!</strong></h1>
+        <h3 class="text-center">We Promise to deliver fresh homemade food whenever and wherever you want</h3>
+        <div class="w-100 text-center mt-5">
+            <a class="btn btn-danger px-4 py-3" href="{% url 'account_signup' %}">
+                <h4 class="m-0"><strong>Join Us <i class="fa fa-arrow-circle-right"></i></strong></h4>
+            </a>
+        </div>
+    </div>
 </section>
 {% endblock content %}

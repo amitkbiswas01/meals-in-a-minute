@@ -1,6 +1,10 @@
+from urllib.parse import urlencode
+from django.http import request
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic import (
+    View,
     TemplateView,
     RedirectView,
     CreateView,
@@ -10,8 +14,8 @@ from django.views.generic import (
     DeleteView,
 )
 
-from accounts.models import SellerProfile
-from miam.models import Advertisement
+from accounts.models import SellerProfile, BuyerProfile
+from miam.models import Advertisement, Order
 
 
 class LandingView(TemplateView):
@@ -93,7 +97,7 @@ class AdListView(ListView):
                 keyword = self.request.GET.get("searched_value", None)
                 print(keyword)
                 if keyword is not None:
-                    return super().get_queryset().filter(title__iexact=keyword)
+                    return super().get_queryset().filter(title__icontains=keyword)
                 else:
                     return super().get_queryset()
         else:
@@ -133,6 +137,21 @@ class AdDetailView(DetailView):
 
     model = Advertisement
     context_object_name = "ad"
+
+    def get_context_data(self, **kwargs):
+        context = super(AdDetailView, self).get_context_data(**kwargs)
+        context["current_url"] = f"/detailad/{self.kwargs['pk']}"
+
+        order_status = self.kwargs.get("order", None)
+        if order_status == "placed":
+            context["order"] = "placed"
+            print(context)
+            return context
+        elif order_status == "failed":
+            context["order"] = "failed"
+            return context
+        else:
+            return context
 
     def get_template_names(self):
         if self.request.user.user_type == "seller":
@@ -184,6 +203,27 @@ class AdCreateView(CreateView):
             return redirect("home")
 
 
+class OrderCreateView(View):
+    """
+    Create new order.
+    """
+
+    def post(self, request, *args, **kwargs):
+
+        try:
+            buyer = BuyerProfile.objects.get(user=request.user)
+            advertisement = Advertisement.objects.get(id=self.kwargs["pk"])
+            quantity = request.POST.get("quantity", 1)
+            
+            Order(buyer=buyer, advertisement=advertisement, quantity=quantity).save()
+
+            url = f"/detailad/{self.kwargs['pk']}/placed"
+            return redirect(url)
+        except ObjectDoesNotExist:
+            url = f"/detailad/{self.kwargs['pk']}/failed"
+            return redirect(url)
+
+
 class AdUpdateView(UpdateView):
     """
     Update existing advertisement.
@@ -222,3 +262,20 @@ class AdDeleteView(DeleteView):
             return super(AdDeleteView, self).dispatch(request, *args, **kwargs)
         else:
             return redirect("home")
+
+
+class ProfileView(TemplateView):
+    template_name = "miam/profile.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        if self.request.user.user_type == "buyer":
+            try:
+                buyer_profile = BuyerProfile.objects.get(user=self.request.user)
+                context["buyer_profile"] = buyer_profile
+                context["orders"] = Order.objects.filter(buyer=buyer_profile).order_by(
+                    "-created_at"
+                )
+            except ObjectDoesNotExist:
+                return context
+        return context

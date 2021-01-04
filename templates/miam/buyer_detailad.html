@@ -1,11 +1,111 @@
-{% extends 'base.html' %}
+{% extends 'miam/miam_base.html' %}
+
 
 {% block title %} Seller {% endblock title %}
 
 {% block content %}
 
-<section class="container my-5 d-flex justify-content-center align-items-center" style="min-height: 90vh">
-    <h1>{{ad.title}} Buyer</h1>
+<section class="container">
+    {% if order == "placed" %}
+    <div class="row mt-2 w-100 d-flex justify-content-end">
+        <div class="p-5 alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Order Placed Successfully 😁</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+                onClick="location.href='{{current_url}}'">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% elif order == "falied" %}
+    <div class="row mt-2 w-100 d-flex justify-content-end">
+        <div class="p-5 alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Ordering failed! Please try again 😔</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    {% else %}
+    <div class="mt-5"></div>
+    {% endif %}
+    <div class="row py-4 mb-5 bg-white rounded-lg" style="min-height: 80vh;">
+        <div class="col-6 d-flex justify-content-center align-items-center">
+            <img class="w-100 img-fluid" src="/media/{{ad.photo}}" alt="{{ad.title}}">
+        </div>
+        <div class="col-5 px-4 mx-auto mt-2 shadow bg-white rounded-lg">
+            <div class="pt-4 row">
+                <div class="col-8 d-flex flex-column">
+                    <h3><strong>{{ad.title}}</strong></h3>
+                    <p class="text-muted">Posted on {{ad.available_from}} at {{ad.location}}</p>
+                </div>
+                <div class="col-4">
+                    {% comment %} ORDER WITH US MODAL BUTTON {% endcomment %}
+                    <button type="button" class="w-100 btn btn-info" data-toggle="modal" data-target="#orderWithUs">
+                        Order with Us
+                    </button>
+                    {% comment %} ORDER WITH US MODAL {% endcomment %}
+                    <div class="modal fade" id="orderWithUs" data-backdrop="static" data-keyboard="false" tabindex="-1"
+                        aria-labelledby="orderWithUsLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="orderWithUsLabel">Select Quantity</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body d-flex justify-content-center">
+                                    <form class="w-75 d-flex" action="{% url 'createorder' ad.pk %}" method="post">
+                                        {% csrf_token %}
+                                        <input class="mr-2 form-control" type="number" min=0 name="quantity"
+                                            value="{{quantity}}">
+                                        <button class="btn btn-info" type="submit">Order!</button>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <p class="w-100 text-muted text-center">
+                                        Enter any positive number. Depends on product stock.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="mt-2 w-100 btn btn-info" data-toggle="modal" data-target="#callSeller">Call
+                        Seller</button>
+                    <div class="modal fade" id="callSeller" data-backdrop="static" data-keyboard="false" tabindex="-1"
+                        aria-labelledby="callSellerLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="callSellerLabel">Sellers Number</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <h4 class="w-100 text-center">{{ad.seller.user.phone_no}}</h4>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 px-4 w-100 d-flex justify-content-between align-items-center">
+                <h2><strong class="text-danger"> &#x9f3; {{ad.price}}</strong></h2>
+                <div>
+                    <h6 class="badge badge-pill badge-danger">#{{ad.category}}</h6>
+                    <h6 class="badge badge-pill badge-danger">#homemade</h6>
+                    <h6 class="badge badge-pill badge-danger">#affordable</h6>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h4>Description</h4>
+                <p>{{ad.description}}</p>
+            </div>
+            <p class="mt-2 w-100 text-right text-muted">available till <strong>{{ad.available_till}}</strong></p>
+        </div>
+    </div>
 </section>
 
 {% endblock content %}

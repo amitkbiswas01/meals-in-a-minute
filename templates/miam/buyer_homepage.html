@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+{% extends 'miam/miam_base.html' %}
+
 {% load static %}
 
 {% block title %} Buyer {% endblock title %}
@@ -10,7 +11,7 @@
             <div class="w-75 mt-5 mx-auto">
                 <h6>SEARCH BY <strong class="text-danger">LOCATION</strong></h6>
             </div>
-            <div class="list-group w-75 mt-2 mx-auto">
+            <div class="list-group w-75 mt-2 mx-auto" style="max-height: 200px; overflow: scroll; overflow-x: hidden;">
                 <a href="{% url 'search_listad' 'Dhaka'  %}"
                     class="list-group-item list-group-item-action list-group-item-secondary">Dhaka</a>
                 <a href="{% url 'search_listad' 'Chattogram'  %}"
@@ -32,13 +33,19 @@
                 <h6>SEARCH BY <strong class="text-danger">CATEGORY</strong></h6>
             </div>
             <div class="list-group w-75 mt-2 mx-auto">
-                <a href="#" class="list-group-item list-group-item-action list-group-item-dark">Homemade Bengali
+                <a href="{% url 'search_listad' 'bengali_food'  %}"
+                    class="list-group-item list-group-item-action list-group-item-dark">Homemade Bengali
                     Food</a>
-                <a href="#" class="list-group-item list-group-item-action">Street Food</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-dark">Sea Food</a>
-                <a href="#" class="list-group-item list-group-item-action">Drinks and Juices</a>
-                <a href="#" class="list-group-item list-group-item-action list-group-item-dark">Sweets and Pithas</a>
-                <a href="#" class="list-group-item list-group-item-action">Cakes and Bakery</a>
+                <a href="{% url 'search_listad' 'street_food'  %}" class="list-group-item list-group-item-action">Street
+                    Food</a>
+                <a href="{% url 'search_listad' 'sea_food'  %}"
+                    class="list-group-item list-group-item-action list-group-item-dark">Sea Food</a>
+                <a href="{% url 'search_listad' 'drinks'  %}" class="list-group-item list-group-item-action">Drinks and
+                    Juices</a>
+                <a href="{% url 'search_listad' 'sweets'  %}"
+                    class="list-group-item list-group-item-action list-group-item-dark">Sweets and Pithas</a>
+                <a href="{% url 'search_listad' 'bakery'  %}" class="list-group-item list-group-item-action">Cakes and
+                    Bakery</a>
             </div>
         </div>
         <div class="col-8 container">
@@ -68,7 +75,7 @@
             </div>
             <div class="d-flex flex-column justify-content-center align-items-center">
                 {% for ad in ads %}
-                <div class="card border-info mb-3" style="max-width: 540px;">
+                <div class="card shadow mb-3 rounded-lg" style="max-width: 540px;">
                     <div class="row no-gutters">
                         <div class="col-md-4">
                             <img src="/media/{{ad.photo}}" class="card-img" alt="{{ad.title}}">
