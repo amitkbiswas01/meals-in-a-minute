@@ -19,8 +19,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
-    .miambg {
-      background-image: url("{% static 'img/bg.png' %}");
+    .landing-bg {
+      background-image: url("{% static 'img/new-bg.jpg' %}");
       height: 100%;
 
       background-position: center;
@@ -30,8 +30,8 @@
   </style>
 </head>
 
-<body class="bg-secondary" style="font-family: 'Roboto Condensed', sans-serif;">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<body style="font-family: 'Roboto Condensed', sans-serif;">
+  <nav class="navbar shadow navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand ml-5 text-dark font-weight-bold" href="{% url 'home' %}">Meals in a Minute</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,12 +43,6 @@
         <li class="nav-item">
           <a class="nav-link text-dark" href="{% url 'home' %}">Home</a>
         </li>
-        {% comment %} <li class="nav-item">
-          <a class="nav-link text-dark" href="{% url 'account_login' %}">Login</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link text-dark" href="{% url 'account_signup' %}">Signup</a>
-        </li> {% endcomment %}
         <li class="nav-item">
           <a class="nav-link text-dark" href="#about">About</a>
         </li>

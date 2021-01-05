@@ -4,7 +4,7 @@
 {% block title %}Log Out{% endblock %}
 {% block content %}
 <section class="container d-flex justify-content-center align-items-center" style="height: 90vh">
-    <div style="width: 25rem;">
+    <div class="p-5 bg-white" style="width: 25rem;">
         <h1>Log Out</h1>
         <p>Are you sure you want to log out?</p>
         <form method="post" action="{% url 'account_logout' %}">

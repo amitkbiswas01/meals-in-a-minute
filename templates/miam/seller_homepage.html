@@ -6,10 +6,12 @@
 {% block content %}
 
 <section class="container d-flex flex-column justify-content-center align-items-center" style="height: 90vh">
-    <h1>You are logged in as a Seller!</h1>
-    <div class="w-75 d-flex justify-content-center align-items-center">
-        <a class="btn btn-primary mr-4" href="{% url 'createad' %}">Create Advertisement</a>
-        <a class="btn btn-primary" href="{% url 'listad' %}">List all Advertisements</a>
+    <div class="w-75 bg-white p-4 d-flex flex-column justify-content-center align-items-center">
+        <h1>You are logged in as a Seller!</h1>
+        <div class="w-75 d-flex justify-content-center align-items-center">
+            <a class="btn btn-danger mr-4" href="{% url 'createad' %}">Create Advertisement</a>
+            <a class="btn btn-danger" href="{% url 'listad' %}">List all Advertisements</a>
+        </div>
     </div>
 </section>
 

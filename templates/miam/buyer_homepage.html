@@ -83,10 +83,12 @@
                         <div class="col-md-8">
                             <div class="card-body">
                                 <h4 class="card-title"><a class="stretched-link"
-                                        href="{% url 'detailad' ad.pk%}">{{ad.title}}</a></h4>
+                                        href="{% url 'detailad' ad.pk%}">{{ad.title}}</a>
+                                </h4>
                                 <div
                                     class="pr-4 pb-2 mb-2 border-bottom d-flex justify-content-between align-items-center">
-                                    <h6 class="text-secondary card-subtitle"><strong>{{ad.location}}</strong></h6>
+                                    <h6 class="text-secondary card-subtitle">From <strong>{{ad.location}}</strong> by
+                                        <span class="text-danger">{{ad.seller.company_name}}</span></h6>
                                     <h6 class="card-subtitle">Price: &#x9f3;{{ad.price}}</h6>
                                 </div>
                                 <p class="text-right card-text">

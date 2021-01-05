@@ -6,7 +6,7 @@
 {% block content %}
 <section class="container d-flex justify-content-center align-items-center" style="height: 90vh">
     <div class="d-flex justify-content-center align-items-center">
-        <div class="card mr-4" style="width: 15rem;">
+        <div class="card shadow mr-4" style="width: 15rem;">
             <img src="{% static 'img/seller.jpg' %}" class="card-img-top" alt="seller image">
             <div class="card-body">
                 <h5 class="card-title">Seller</h5>
@@ -15,7 +15,7 @@
                 <a href="{% url 'seller_signup' %}" class="btn btn-danger">Become a Seller</a>
             </div>
         </div>
-        <div class="card" style="width: 15rem;">
+        <div class="card shadow" style="width: 15rem;">
             <img src="{% static 'img/buyer.jpg' %}" class="card-img-top" alt="buyer image">
             <div class="card-body">
                 <h5 class="card-title">Buyer</h5>

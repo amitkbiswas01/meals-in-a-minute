@@ -3,14 +3,23 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<section class="miambg d-flex justify-content-center align-items-center" style="height: 90vh">
-    <div class="bg-white p-5 rounded" style="width: 25rem;">
-        <h1 class="w-100 text-center">Log in</h1>
-        <form method="post">
-            {% csrf_token %}
-            {{form | crispy}}
-            <button type="submit" class="mt-4 w-100 btn btn-danger">Login</button>
-        </form>
+<section class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-6 d-flex justify-content-center align-items-center">
+            <img class="w-75 img-fluid" src="{% static 'img/login-signup-bg.jpg' %}" alt="indian-foods">
+        </div>
+        <div class="col-6 d-flex border-left justify-content-center align-items-center">
+            <div class="bg-white text-dark shadow p-4 rounded-lg" style="width: 20rem;">
+                <form method="post">
+                    {% csrf_token %}
+                    {{form | crispy}}
+                    <button type="submit" class="mt-4 w-100 font-weight-bold py-2 btn btn-danger">LOG IN</button>
+                </form>
+                <p class="w-100 text-center mt-5">Not a member?
+                    <a class="text-danger" href="{% url 'account_signup' %}"> <u>Join Us Now!</u></a>
+                </p>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock content %}

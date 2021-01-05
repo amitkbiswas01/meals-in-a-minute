@@ -3,65 +3,78 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<section class="container d-flex justify-content-center align-items-center" style="min-height: 90vh">
-    <div class="my-5 bg-white p-5" style="width: 35rem;">
-        {% if is_seller %}
-        <form method="post">
-            {% csrf_token %}
-            <h1 class="w-100 text-center mb-4">Register as Seller</h1>
-            {{ form.email|as_crispy_field }}
-            <div class="form-row">
-                <div class="form-group col-md-6 mb-0">
-                    {{ form.password1|as_crispy_field }}
-                </div>
-                <div class="form-group col-md-6 mb-0">
-                    {{ form.password2|as_crispy_field }}
-                </div>
+<section class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-6 my-4 d-flex justify-content-center align-items-center">
+            <div class="bg-white text-dark shadow p-4 rounded-lg">
+                {% if is_seller %}
+                <form method="post">
+                    {% csrf_token %}
+                    <h1 class="w-100 text-center mb-4">Join as a <span
+                            class="text-danger font-weight-bold">SELLER</span>
+                    </h1>
+                    {{ form.email|as_crispy_field }}
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.password1|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.password2|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-8 mb-0">
+                            {{ form.full_name|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-4 mb-0">
+                            {{ form.phone_no|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.location|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.food_category|as_crispy_field }}
+                        </div>
+                    </div>
+                    {{ form.company_name|as_crispy_field }}
+                    <button type="submit" class="w-100 btn btn-danger">Sign up</button>
+                </form>
+                {% else %}
+                <h1 class="w-100 text-center mb-4">Join as a <span class="text-danger font-weight-bold">BUYER</span>
+                </h1>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.email|as_crispy_field }}
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.password1|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.password2|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-8 mb-0">
+                            {{ form.full_name|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-4 mb-0">
+                            {{ form.phone_no|as_crispy_field }}
+                        </div>
+                    </div>
+                    {{ form.address|as_crispy_field }}
+                    <button type="submit" class="w-100 btn btn-danger">Sign up</button>
+                </form>
+                {% endif %}
+                <p class="w-100 text-center mt-5">Already a member?
+                    <a class="text-danger" href="{% url 'account_login' %}"> <u>Log in Now!</u></a>
+                </p>
             </div>
-            <div class="form-row">
-                <div class="form-group col-md-8 mb-0">
-                    {{ form.full_name|as_crispy_field }}
-                </div>
-                <div class="form-group col-md-4 mb-0">
-                    {{ form.phone_no|as_crispy_field }}
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-6 mb-0">
-                    {{ form.location|as_crispy_field }}
-                </div>
-                <div class="form-group col-md-6 mb-0">
-                    {{ form.food_category|as_crispy_field }}
-                </div>
-            </div>
-            {{ form.company_name|as_crispy_field }}
-            <button type="submit" class="w-100 btn btn-danger">Sign up</button>
-        </form>
-        {% else %}
-        <h1 class="w-100 text-center mb-4">Register as Buyer</h1>
-        <form method="post">
-            {% csrf_token %}
-            {{ form.email|as_crispy_field }}
-            <div class="form-row">
-                <div class="form-group col-md-6 mb-0">
-                    {{ form.password1|as_crispy_field }}
-                </div>
-                <div class="form-group col-md-6 mb-0">
-                    {{ form.password2|as_crispy_field }}
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group col-md-8 mb-0">
-                    {{ form.full_name|as_crispy_field }}
-                </div>
-                <div class="form-group col-md-4 mb-0">
-                    {{ form.phone_no|as_crispy_field }}
-                </div>
-            </div>
-            {{ form.address|as_crispy_field }}
-            <button type="submit" class="w-100 btn btn-danger">Sign up</button>
-        </form>
-        {% endif %}
+        </div>
+        <div class="col-6 d-flex justify-content-center align-items-center">
+            <img class="w-100 img-fluid" src="{% static 'img/login-signup-bg.jpg' %}" alt="indian-foods">
+        </div>
     </div>
 </section>
 {% endblock content %}
