@@ -100,7 +100,8 @@
                 </div>
             </div>
             <div class="mt-4">
-                <h6 class="mb-4">By <span class="text-danger">{{ad.seller.company_name}}</span></h6>
+                <h6 class="mb-4">By <a href="{% url 'otherprofile' ad.seller.user.pk%}"
+                        class="text-danger">{{ad.seller.company_name}}</a></h6>
                 <h4>Description</h4>
                 <p>{{ad.description}}</p>
             </div>

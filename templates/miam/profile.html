@@ -6,24 +6,58 @@
 {% block content %}
 
 <section class="container mt-5">
-    <div class="row py-4 shadow-lg mb-5 elem-bg rounded-lg" style="height: 75vh;">
+    <div class="row py-4 shadow-lg mb-5 elem-bg rounded-lg" style="min-height: 75vh;">
         <div class="col-6 d-flex justify-content-center align-items-center">
-            <div class="m-2 px-4 py-2 w-100 h-60 bg-white shadow-lg rounded-lg">
-                <h1><strong>{{user.full_name}}</strong></h1>
-                <div class="row">
-                    <div class="col">
-                        <h5 class="text-muted">{{user.email}}</h5>
+            <div class="m-2 pl-5 pr-4 py-4 w-100 h-60 bg-white shadow rounded-lg">
+                {% if user_type == "buyer" %}
+                <div class="w-100 h-100">
+                    <h1><strong>{{buyer_profile.user.full_name}}</strong></h1>
+                    <h5 class="mt-4"><strong>Contacts: </strong></h5>
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="text-muted">{{buyer_profile.user.email}}</h5>
+                        </div>
+                        <div class="col">
+                            <h5 class="text-muted">{{buyer_profile.user.phone_no}}</h5>
+                        </div>
                     </div>
-                    <div class="col">
-                        <h5>{{user.phone_no}}</h5>
+                    <h5 class="mt-4"><strong>Delivery Address :</strong></h5>
+                    <h5 class="text-muted">{{buyer_profile.address}}</h5>
+                </div>
+                {% else %}
+                <div class="w-100-h-100">
+                    <h1><strong>{{seller_profile.company_name}}</strong></h1>
+                    <h6 class="text-danger">by {{seller_profile.user.full_name}}</h6>
+                    <h5 class="mt-4"><strong>Contacts: </strong></h5>
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="text-muted">{{seller_profile.user.email}}</h5>
+                        </div>
+                        <div class="col">
+                            <h5 class="text-muted">{{seller_profile.user.phone_no}}</h5>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <h5 class="mt-4"><strong>Shop Location :</strong></h5>
+                            <h5 class="text-muted">{{seller_profile.location}}</h5>
+                        </div>
+                        <div class="col">
+                            <h5 class="mt-4"><strong>Food Category :</strong></h5>
+                            <h5 class="text-muted">{{seller_profile.food_category}}</h5>
+                        </div>
                     </div>
                 </div>
-                <h4 class="mt-5"><strong>Delivery Address :</strong></h4>
-                <h5 class="mt-2">{{buyer_profile.address}}</h5>
+                {% endif %}
             </div>
         </div>
+        {% if orders %}
         <div class="col-6">
+            {% if user_type == "buyer" %}
             <h4 class="mb-4 text-danger"><strong>Order History</strong></h4>
+            {% else %}
+            <h4 class="mb-4 text-danger"><strong>Selling History</strong></h4>
+            {% endif %}
             <div class="border border-secondary rounded"
                 style="max-height: 320px; overflow: scroll; overflow-x: hidden;">
                 <ul class="list-group">
@@ -34,15 +68,68 @@
                             <h5 class="mb-1"><strong>{{order.advertisement.title}}</strong></h5>
                             <small class="text-muted">{{order.created_at}}</small>
                         </div>
+                        {% if user_type == "buyer" %}
                         <p class="mb-1">Ordered <strong>{{order.quantity}}</strong>
                             {{order.advertisement.title}} from
-                            <strong class="text-danger">{{order.advertisement.seller.company_name}}</strong></p>
+                            <strong class="text-danger">
+                                <a href="{% url 'otherprofile' order.advertisement.seller.user.pk%}"
+                                    class="text-danger">{{order.advertisement.seller.company_name}}
+                                </a></strong></p>
+                        {% else %}
+                        <p class="mb-1"><strong><a class="text-danger"
+                                    href="{% url 'otherprofile'  order.buyer.user.pk%}">{{order.buyer.user.full_name}}</a></strong>
+                            ordered
+                            <strong>{{order.quantity}}</strong>
+                            {{order.advertisement.title}}
+                        </p>
+                        {% endif %}
                         <small class="text-muted">Delivary status goes here</small>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
+        {% else %}
+        <div class="col-6 d-flex justify-content-center align-items-center">
+            {% if user_type == "buyer" %}
+            <form class="px-4 py-4 w-100" action="{% url 'create_userreview' buyer_profile.user.pk %}" method="post">
+                {% else %}
+                <form class="px-4 py-4 w-100" action="{% url 'create_userreview' seller_profile.user.pk %}"
+                    method="post">
+                    {% endif %}
+                    {% csrf_token %}
+                    <div class="form-group w-100">
+                        <textarea class="form-control border-0 shadow-lg" rows="8"
+                            placeholder="POST A REVIEW OF THIS USER" id="comment" name="description"
+                            value="{{description}}"></textarea>
+                    </div>
+                    <div class="w-100 d-flex justify-content-end">
+                        <button type="submit" class="w-100 btn btn-danger">Submit</button>
+                    </div>
+                </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="row elem-bg py-5 my-5 rounded-lg d-flex flex-column justify-content-center align-items-center">
+        {% for review in reviews %}
+        <div class="card w-75 px-5 py-2 mb-2 shadow mb-3 rounded-lg">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-subtitle mb-2 text-muted">
+                        {% if user_type == "buyer" %}
+                        <strong class="text-danger">{{review.reviewed_by.full_name}}</strong>
+                        reviewed <strong class="text-danger">{{buyer_profile.user.full_name}} :</strong></h5>
+                    {% else %}
+                    <strong class="text-danger">{{review.reviewed_by.full_name}}</strong>
+                    reviewed <strong class="text-danger">{{seller_profile.user.full_name}} :</strong></h5>
+                    {% endif %}
+                    <h6 class="card-subtitle mb-2 text-muted font-weight-bold">at {{review.created_at}}</h6>
+                </div>
+                <p class="card-text">{{review.description}}</p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </section>
 

@@ -14,8 +14,8 @@ from django.views.generic import (
     DeleteView,
 )
 
-from accounts.models import SellerProfile, BuyerProfile
-from miam.models import Advertisement, Order, Review
+from accounts.models import SellerProfile, BuyerProfile, User
+from miam.models import Advertisement, Order, AdReview, UserReview
 
 
 class LandingView(TemplateView):
@@ -145,7 +145,7 @@ class AdDetailView(DetailView):
         context["current_url"] = f"/detailad/{self.kwargs['pk']}"
 
         # reviews
-        context["reviews"] = Review.objects.filter(
+        context["reviews"] = AdReview.objects.filter(
             advertisement_id=self.kwargs["pk"]
         ).order_by("-created_at")
 
@@ -275,24 +275,74 @@ class ProfileView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ProfileView, self).get_context_data(**kwargs)
-        if self.request.user.user_type == "buyer":
-            try:
-                buyer_profile = BuyerProfile.objects.get(user=self.request.user)
-                context["buyer_profile"] = buyer_profile
-                context["orders"] = Order.objects.filter(buyer=buyer_profile).order_by(
-                    "-created_at"
-                )
-            except ObjectDoesNotExist:
+        try:
+            # checks if logged in user cheking own profile or other profile
+            other_profile_id = self.kwargs.get("pk", None)
+
+            # own profile
+            if other_profile_id is None:
+                if self.request.user.user_type == "buyer":
+                    buyer_profile = BuyerProfile.objects.get(user=self.request.user)
+
+                    context["user_type"] = "buyer"
+                    context["buyer_profile"] = buyer_profile
+                    context["orders"] = Order.objects.filter(
+                        buyer=buyer_profile
+                    ).order_by("-created_at")
+                    context["reviews"] = UserReview.objects.filter(
+                        review_of=self.request.user
+                    ).order_by("-created_at")
+
+                elif self.request.user.user_type == "seller":
+                    seller_profile = SellerProfile.objects.get(user=self.request.user)
+
+                    context["user_type"] = "seller"
+                    context["seller_profile"] = seller_profile
+                    context["orders"] = Order.objects.filter(
+                        advertisement__seller=seller_profile
+                    ).order_by("-created_at")
+                    context["reviews"] = UserReview.objects.filter(
+                        review_of=self.request.user
+                    ).order_by("-created_at")
+                else:
+                    return redirect("home")
                 return context
-        return context
+            else:
+                # if visiting others profile
+                user = User.objects.get(id=other_profile_id)
+                if self.request.user.user_type == "buyer":
+                    seller_profile = SellerProfile.objects.get(user=user)
+
+                    context["user_type"] = "seller"
+                    context["seller_profile"] = seller_profile
+                    context["orders"] = False
+                    context["reviews"] = UserReview.objects.filter(
+                        review_of=user
+                    ).order_by("-created_at")
+
+                elif self.request.user.user_type == "seller":
+
+                    buyer_profile = BuyerProfile.objects.get(user=user)
+
+                    context["user_type"] = "buyer"
+                    context["buyer_profile"] = buyer_profile
+                    context["orders"] = False
+                    context["reviews"] = UserReview.objects.filter(
+                        review_of=user
+                    ).order_by("-created_at")
+                else:
+                    return redirect("home")
+                return context
+        except ObjectDoesNotExist:
+            return context
 
 
-class ReviewCreateView(CreateView):
+class AdReviewCreateView(CreateView):
     """
     Create new review.
     """
 
-    model = Review
+    model = AdReview
 
     def post(self, request, *args, **kwargs):
         try:
@@ -300,7 +350,7 @@ class ReviewCreateView(CreateView):
             advertisement = Advertisement.objects.get(id=self.kwargs["pk"])
             description = request.POST.get("description")
 
-            Review(
+            AdReview(
                 reviewed_by=buyer,
                 advertisement_id=advertisement,
                 description=description,
@@ -310,4 +360,26 @@ class ReviewCreateView(CreateView):
             return redirect(url)
         except ObjectDoesNotExist:
             url = f"/detailad/{self.kwargs['pk']}"
+            return redirect(url)
+
+
+class UserReviewCreateView(CreateView):
+    model = UserReview
+
+    def post(self, request, *args, **kwargs):
+        try:
+            reviewed_by = request.user
+            review_of = User.objects.get(id=self.kwargs["pk"])
+            description = request.POST.get("description")
+
+            UserReview(
+                reviewed_by=reviewed_by,
+                review_of=review_of,
+                description=description,
+            ).save()
+
+            url = f"/detailprofile/{self.kwargs['pk']}"
+            return redirect(url)
+        except ObjectDoesNotExist:
+            url = f"/detailprofile/{self.kwargs['pk']}"
             return redirect(url)

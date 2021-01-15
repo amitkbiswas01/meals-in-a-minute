@@ -74,24 +74,55 @@ class Order(models.Model):
         return reverse("order_detail", kwargs={"pk": self.pk})
 
 
-class Review(models.Model):
+class AdReview(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     advertisement_id = models.ForeignKey(
         "miam.Advertisement", verbose_name=_("Advertisement"), on_delete=models.CASCADE
     )
     reviewed_by = models.ForeignKey(
-        "accounts.Buyerprofile", verbose_name=_("Reviewed By"), on_delete=models.CASCADE
+        "accounts.Buyerprofile",
+        verbose_name=_("Reviewed By"),
+        on_delete=models.CASCADE,
     )
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     description = models.TextField(_("Review Description"))
 
     class Meta:
-        verbose_name = _("review")
-        verbose_name_plural = _("reviews")
+        verbose_name = _("Advertisement Review")
+        verbose_name_plural = _("Advertisement Reviews")
 
     def __str__(self):
         return self.advertisement_id.title
 
     def get_absolute_url(self):
-        return reverse("review_detail", kwargs={"pk": self.pk})
+        return reverse("adreview_detail", kwargs={"pk": self.pk})
+
+
+class UserReview(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    description = models.TextField(_("Review Description"))
+    reviewed_by = models.ForeignKey(
+        "accounts.User",
+        verbose_name=_("Reviewed By"),
+        related_name="reviewedby",
+        on_delete=models.CASCADE,
+    )
+    review_of = models.ForeignKey(
+        "accounts.User",
+        verbose_name=_("Review Of"),
+        related_name="reviewof",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = _("User Review")
+        verbose_name_plural = _("User Reviews")
+
+    def __str__(self):
+        return self.created_at.strftime("%m/%d/%Y, %H:%M:%S")
+
+    def get_absolute_url(self):
+        return reverse("userreview_detail", kwargs={"pk": self.pk})

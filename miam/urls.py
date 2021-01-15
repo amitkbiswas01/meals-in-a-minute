@@ -11,9 +11,10 @@ from miam.views import (
     AdDetailView,
     AdUpdateView,
     AdDeleteView,
+    AdReviewCreateView,
     # profile views
     ProfileView,
-    ReviewCreateView,
+    UserReviewCreateView,
 )
 
 url_misc = [
@@ -24,7 +25,7 @@ url_misc = [
 url_ads = [
     path("createad/", AdCreateView.as_view(), name="createad"),
     path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
-    path("createreview/<uuid:pk>", ReviewCreateView.as_view(), name="cretereview"),
+    path("createreview/<uuid:pk>", AdReviewCreateView.as_view(), name="cretereview"),
     path("listad/", AdListView.as_view(), name="listad"),
     path("listad/<str:sort_type>/", AdListView.as_view(), name="listad"),
     path("listad/search/<str:keyword>/", AdListView.as_view(), name="search_listad"),
@@ -35,6 +36,12 @@ url_ads = [
 ]
 url_profiles = [
     path("detailprofile/", ProfileView.as_view(), name="profile"),
+    path("detailprofile/<uuid:pk>", ProfileView.as_view(), name="otherprofile"),
+    path(
+        "createuserreview/<uuid:pk>",
+        UserReviewCreateView.as_view(),
+        name="create_userreview",
+    ),
 ]
 
 urlpatterns = url_misc + url_ads + url_profiles
