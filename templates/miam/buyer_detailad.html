@@ -1,11 +1,11 @@
 {% extends 'miam/miam_base.html' %}
 
 
-{% block title %} Seller {% endblock title %}
+{% block title %} Buyer {% endblock title %}
 
 {% block content %}
 
-<section class="container">
+<section class="container d-flex flex-column justify-content-center">
     {% if order == "placed" %}
     <div class="row mt-2 w-100 d-flex justify-content-end">
         <div class="p-5 alert alert-success alert-dismissible fade show" role="alert">
@@ -28,11 +28,11 @@
     {% else %}
     <div class="mt-5"></div>
     {% endif %}
-    <div class="row py-4 mb-5 bg-white rounded-lg" style="min-height: 80vh;">
-        <div class="col-6 d-flex justify-content-center align-items-center">
-            <img class="w-100 img-fluid" src="/media/{{ad.photo}}" alt="{{ad.title}}">
+    <div class="row py-4 mb-5 elem-bg rounded-lg" style="min-height: 80vh;">
+        <div class="col-5 mx-auto d-flex justify-content-center align-items-center">
+            <img class="w-100 img-fluid shadow-lg rounded-lg" src="/media/{{ad.photo}}" alt="{{ad.title}}">
         </div>
-        <div class="col-5 px-4 mx-auto mt-2 shadow bg-white rounded-lg">
+        <div class="col-5 px-4 mx-auto mt-2 shadow-lg bg-white rounded-lg">
             <div class="pt-4 row">
                 <div class="col-8 d-flex flex-column">
                     <h3><strong>{{ad.title}}</strong></h3>
@@ -106,6 +106,32 @@
             </div>
             <p class="mt-2 w-100 text-right text-muted">available till <strong>{{ad.available_till}}</strong></p>
         </div>
+    </div>
+    <div class="row">
+        <form class="px-5 py-3 w-100 d-flex flex-column justify-content-center align-items-center"
+            action="{% url 'cretereview' ad.pk %}" method="post">
+            {% csrf_token %}
+            <div class="form-group w-75">
+                <textarea class="form-control border-0 shadow-lg" rows="6" placeholder="POST A REVIEW" id="comment"
+                    name="description" value="{{description}}"></textarea>
+            </div>
+            <div class="w-75 d-flex justify-content-end">
+                <button type="submit" class="w-100 btn btn-danger">Submit</button>
+            </div>
+        </form>
+    </div>
+    <div class="row elem-bg py-5 my-5 rounded-lg d-flex flex-column justify-content-center align-items-center">
+        {% for review in reviews %}
+        <div class="card w-75 px-5 py-2 mb-2 shadow mb-3 rounded-lg">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="card-subtitle mb-2 text-muted">Reviewed by {{review.reviewed_by.user.full_name}}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted font-weight-bold">at {{review.created_at}}</h6>
+                </div>
+                <p class="card-text">{{review.description}}</p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
 </section>
 

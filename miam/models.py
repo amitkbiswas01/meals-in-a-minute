@@ -72,3 +72,26 @@ class Order(models.Model):
 
     def get_absolute_url(self):
         return reverse("order_detail", kwargs={"pk": self.pk})
+
+
+class Review(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    advertisement_id = models.ForeignKey(
+        "miam.Advertisement", verbose_name=_("Advertisement"), on_delete=models.CASCADE
+    )
+    reviewed_by = models.ForeignKey(
+        "accounts.Buyerprofile", verbose_name=_("Reviewed By"), on_delete=models.CASCADE
+    )
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    description = models.TextField(_("Review Description"))
+
+    class Meta:
+        verbose_name = _("review")
+        verbose_name_plural = _("reviews")
+
+    def __str__(self):
+        return self.advertisement_id.title
+
+    def get_absolute_url(self):
+        return reverse("review_detail", kwargs={"pk": self.pk})

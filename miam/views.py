@@ -15,7 +15,7 @@ from django.views.generic import (
 )
 
 from accounts.models import SellerProfile, BuyerProfile
-from miam.models import Advertisement, Order
+from miam.models import Advertisement, Order, Review
 
 
 class LandingView(TemplateView):
@@ -82,6 +82,8 @@ class AdListView(ListView):
             "sweets",
             "bakery",
         ]
+
+        # searching types
         url = self.request.path_info
         if "/listad/search/" in url:
             keyword = self.kwargs.get("keyword", None)
@@ -142,10 +144,14 @@ class AdDetailView(DetailView):
         context = super(AdDetailView, self).get_context_data(**kwargs)
         context["current_url"] = f"/detailad/{self.kwargs['pk']}"
 
+        # reviews
+        context["reviews"] = Review.objects.filter(
+            advertisement_id=self.kwargs["pk"]
+        ).order_by("-created_at")
+
         order_status = self.kwargs.get("order", None)
         if order_status == "placed":
             context["order"] = "placed"
-            print(context)
             return context
         elif order_status == "failed":
             context["order"] = "failed"
@@ -214,7 +220,7 @@ class OrderCreateView(View):
             buyer = BuyerProfile.objects.get(user=request.user)
             advertisement = Advertisement.objects.get(id=self.kwargs["pk"])
             quantity = request.POST.get("quantity", 1)
-            
+
             Order(buyer=buyer, advertisement=advertisement, quantity=quantity).save()
 
             url = f"/detailad/{self.kwargs['pk']}/placed"
@@ -279,3 +285,29 @@ class ProfileView(TemplateView):
             except ObjectDoesNotExist:
                 return context
         return context
+
+
+class ReviewCreateView(CreateView):
+    """
+    Create new review.
+    """
+
+    model = Review
+
+    def post(self, request, *args, **kwargs):
+        try:
+            buyer = BuyerProfile.objects.get(user=request.user)
+            advertisement = Advertisement.objects.get(id=self.kwargs["pk"])
+            description = request.POST.get("description")
+
+            Review(
+                reviewed_by=buyer,
+                advertisement_id=advertisement,
+                description=description,
+            ).save()
+
+            url = f"/detailad/{self.kwargs['pk']}"
+            return redirect(url)
+        except ObjectDoesNotExist:
+            url = f"/detailad/{self.kwargs['pk']}"
+            return redirect(url)

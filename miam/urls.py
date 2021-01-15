@@ -13,6 +13,7 @@ from miam.views import (
     AdDeleteView,
     # profile views
     ProfileView,
+    ReviewCreateView,
 )
 
 url_misc = [
@@ -23,6 +24,7 @@ url_misc = [
 url_ads = [
     path("createad/", AdCreateView.as_view(), name="createad"),
     path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
+    path("createreview/<uuid:pk>", ReviewCreateView.as_view(), name="cretereview"),
     path("listad/", AdListView.as_view(), name="listad"),
     path("listad/<str:sort_type>/", AdListView.as_view(), name="listad"),
     path("listad/search/<str:keyword>/", AdListView.as_view(), name="search_listad"),

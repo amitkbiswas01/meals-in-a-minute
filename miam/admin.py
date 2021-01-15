@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Advertisement, Order
+from .models import Advertisement, Order, Review
 
 
 @admin.register(Advertisement)
@@ -43,3 +43,16 @@ class OrderAdmin(admin.ModelAdmin):
         return instance.advertisement.title
 
     get_title.short_description = "Ad Name"
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    model = Review
+
+    list_display = (
+        "get_full_name",
+        "description",
+    )
+
+    def get_full_name(self, instance):
+        return instance.reviewed_by.user.full_name
