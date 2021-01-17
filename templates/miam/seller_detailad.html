@@ -1,12 +1,32 @@
 {% extends 'miam/miam_base.html' %}
 
 
-{% block title %} Seller {% endblock title %}
+{% block title %} {{ad.title}} {% endblock title %}
 
 {% block content %}
 
-<section class="container my-5 d-flex justify-content-center align-items-center" style="min-height: 90vh">
-    <h1>{{ad.title}}</h1>
+<section class="container elem-bg my-5 d-flex justify-content-center align-items-center">
+    <div class="row py-4 mb-5 bg-white rounded-lg" style="min-height: 80vh;">
+        <div class="col-5 mx-auto d-flex justify-content-center align-items-center">
+            <img class="w-100 img-fluid shadow-lg rounded-lg" src="/media/{{ad.photo}}" alt="{{ad.title}}">
+        </div>
+        <div class="col-5 px-4 mx-auto mt-2 shadow-lg bg-white rounded-lg">
+            <div class="pt-4 row">
+                <h3 class="col"><strong>{{ad.title}}</strong></h3>
+                <h6 class="col text-muted m-0">Posted on {{ad.available_from}} at {{ad.location}}</h6>
+            </div>
+            <div class="mt-4 px-4 w-100 d-flex justify-content-between align-items-center">
+                <h2><strong class="text-danger"> &#x9f3; {{ad.price}}</strong></h2>
+                <h4>by <a href="{% url 'otherprofile' ad.seller.user.pk%}"
+                        class="text-danger">{{ad.seller.company_name}}</a></h4>
+            </div>
+            <div class="mt-4">
+                <h4>Description</h4>
+                <p>{{ad.description}}</p>
+            </div>
+            <p class="mt-2 w-100 text-right text-muted">available till <strong>{{ad.available_till}}</strong></p>
+        </div>
+    </div>
 </section>
 
 {% endblock content %}

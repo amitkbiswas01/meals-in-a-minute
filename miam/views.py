@@ -32,12 +32,7 @@ class HomepageView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
 
         if self.request.user.is_authenticated:
-            if self.request.user.user_type == "seller":
-                return reverse("sellerhome", args=args, kwargs=kwargs)
-            elif self.request.user.user_type == "buyer":
-                return reverse("listad", args=args, kwargs=kwargs)
-            else:
-                return reverse("landingpage", args=args, kwargs=kwargs)
+            return reverse("listad", args=args, kwargs=kwargs)
         else:
             return reverse("landingpage", args=args, kwargs=kwargs)
 
@@ -45,6 +40,53 @@ class HomepageView(RedirectView):
 class AdListView(ListView):
     """
     List all advertisements.
+    """
+
+    model = Advertisement
+    fields = [
+        "title",
+        "price",
+        "location",
+        "category",
+        "description",
+        "photo",
+        "available_from",
+        "available_till",
+    ]
+    queryset = Advertisement.objects.all()
+    context_object_name = "ads"
+    paginate_by = 15
+
+    def get_ordering(self):
+        sort_type = self.kwargs.get("sort_type", None)
+
+        if sort_type is None:
+            order_by = "-available_from"
+        else:
+            order_by = f"{sort_type}"
+
+        return [order_by]
+
+    def get_template_names(self):
+        if self.request.user.user_type == "seller":
+            return ["miam/seller_homepage.html"]
+        elif self.request.user.user_type == "buyer":
+            return ["miam/buyer_homepage.html"]
+        else:
+            return ["landing_page.html"]
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and (
+            request.user.user_type == "seller" or request.user.user_type == "buyer"
+        ):
+            return super(AdListView, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect("home")
+
+
+class AdListSearchView(ListView):
+    """
+    Show searched values.
     """
 
     model = Advertisement
@@ -83,53 +125,28 @@ class AdListView(ListView):
             "bakery",
         ]
 
-        # searching types
-        url = self.request.path_info
-        if "/listad/search/" in url:
-            keyword = self.kwargs.get("keyword", None)
+        keyword = self.kwargs.get("keyword", None)
 
-            if keyword is None:
-                return super().get_queryset()
-
-            if keyword in locations:
-                return super().get_queryset().filter(location=keyword)
-            elif keyword in categories:
-                return super().get_queryset().filter(category=keyword)
-            else:
-                keyword = self.request.GET.get("searched_value", None)
-                print(keyword)
-                if keyword is not None:
-                    return super().get_queryset().filter(title__icontains=keyword)
-                else:
-                    return super().get_queryset()
-        else:
+        if keyword is None:
             return super().get_queryset()
-
-    def get_ordering(self):
-        sort_type = self.kwargs.get("sort_type", None)
-
-        if sort_type is None:
-            order_by = "-available_from"
+        elif keyword in locations:
+            return super().get_queryset().filter(location=keyword)
+        elif keyword in categories:
+            return super().get_queryset().filter(category=keyword)
         else:
-            order_by = f"{sort_type}"
-
-        return [order_by]
+            keyword = self.request.GET.get("searched_value", None)
+            if keyword is not None:
+                return super().get_queryset().filter(title__icontains=keyword)
+            else:
+                return super().get_queryset()
 
     def get_template_names(self):
         if self.request.user.user_type == "seller":
-            return ["miam/seller_list.html"]
+            return ["miam/seller_homepage.html"]
         elif self.request.user.user_type == "buyer":
             return ["miam/buyer_homepage.html"]
         else:
             return ["landing_page.html"]
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and (
-            request.user.user_type == "seller" or request.user.user_type == "buyer"
-        ):
-            return super(AdListView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
 
 
 class AdDetailView(DetailView):

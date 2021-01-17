@@ -1,18 +1,75 @@
 {% extends 'miam/miam_base.html' %}
 
 
-{% block title %} Seller {% endblock title %}
+{% block title %} Seller List {% endblock title %}
 
 {% block content %}
 
-<section class="container d-flex flex-column justify-content-center align-items-center" style="height: 90vh">
-    <div class="w-75 bg-white p-4 d-flex flex-column justify-content-center align-items-center">
-        <h1>You are logged in as a Seller!</h1>
-        <div class="w-75 d-flex justify-content-center align-items-center">
-            <a class="btn btn-danger mr-4" href="{% url 'createad' %}">Create Advertisement</a>
-            <a class="btn btn-danger" href="{% url 'listad' %}">List all Advertisements</a>
+<section class="container my-5 p-5 elem-bg rounded-lg d-flex flex-column justify-content-center align-items-center"
+    style="min-height: 90vh">
+    <div class="row w-100 mb-4">
+        <div class="col-3">
+            <a class="w-100 btn btn-danger" href="{% url 'createad' %}">Create Advertisement</a>
+        </div>
+        <div class="col-3">
+            <a class="w-100 btn btn-danger" href="{% url 'listad' %}">All Advertisements</a>
+        </div>
+        <div class="col-6">
+            <form class="w-100 form-inline" method="get" action="{% url 'search_listad' 'value'%}">
+                <input class="w-75 form-control mr-2" type="search" value="{{searched_value}}" name="searched_value"
+                    placeholder="search by advertisement title" aria-label="Search" />
+                <button class="w-20 btn btn-outline-danger" type="submit">Search</button>
+            </form>
         </div>
     </div>
+    <table class="bg-white text-center table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Price</th>
+                <th>Location</th>
+                <th>Category</th>
+                <th>Available till</th>
+                <th>Update</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ad in ads %}
+            <tr>
+                <td><a href="{% url 'detailad' ad.pk %}">{{ad.title}}</a></td>
+                <td>{{ ad.price }}</td>
+                <td>{{ ad.location }}</td>
+                <td>{{ ad.category }}</td>
+                <td>{{ ad.available_till }}</td>
+                <td class="text-center"><a class="btn btn-primary" href="{% url 'updatead' ad.pk %}">Update</a></td>
+                <td class="text-center"><a class="btn btn-danger" href="{% url 'deletead' ad.pk %}">Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+    {% endif %}
 </section>
 
 {% endblock content %}

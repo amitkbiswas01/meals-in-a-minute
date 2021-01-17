@@ -8,6 +8,7 @@ from miam.views import (
     AdCreateView,
     OrderCreateView,
     AdListView,
+    AdListSearchView,
     AdDetailView,
     AdUpdateView,
     AdDeleteView,
@@ -28,7 +29,9 @@ url_ads = [
     path("createreview/<uuid:pk>", AdReviewCreateView.as_view(), name="cretereview"),
     path("listad/", AdListView.as_view(), name="listad"),
     path("listad/<str:sort_type>/", AdListView.as_view(), name="listad"),
-    path("listad/search/<str:keyword>/", AdListView.as_view(), name="search_listad"),
+    path(
+        "listad/search/<str:keyword>/", AdListSearchView.as_view(), name="search_listad"
+    ),
     path("detailad/<uuid:pk>/", AdDetailView.as_view(), name="detailad"),
     path("detailad/<uuid:pk>/<str:order>/", AdDetailView.as_view(), name="detailad"),
     path("updatead/<uuid:pk>/", AdUpdateView.as_view(), name="updatead"),
