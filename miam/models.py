@@ -41,8 +41,8 @@ class Advertisement(models.Model):
     available_till = models.DateTimeField(_("Available till"))
 
     class Meta:
-        verbose_name = _("advertisement")
-        verbose_name_plural = _("advertisements")
+        verbose_name = _("Advertisement")
+        verbose_name_plural = _("Advertisements")
 
     def __str__(self):
         return self.title
@@ -65,8 +65,8 @@ class Order(models.Model):
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:
-        verbose_name = _("order")
-        verbose_name_plural = _("orders")
+        verbose_name = _("Order")
+        verbose_name_plural = _("Orders")
 
     def __str__(self):
         return self.advertisement.title
@@ -78,7 +78,7 @@ class Order(models.Model):
 class AdReview(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    advertisement_id = models.ForeignKey(
+    advertisement = models.ForeignKey(
         "miam.Advertisement", verbose_name=_("Advertisement"), on_delete=models.CASCADE
     )
     reviewed_by = models.ForeignKey(
@@ -86,15 +86,15 @@ class AdReview(models.Model):
         verbose_name=_("Reviewed By"),
         on_delete=models.CASCADE,
     )
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     description = models.TextField(_("Review Description"))
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:
         verbose_name = _("Advertisement Review")
         verbose_name_plural = _("Advertisement Reviews")
 
     def __str__(self):
-        return self.advertisement_id.title
+        return self.advertisement.title
 
     def get_absolute_url(self):
         return reverse("adreview_detail", kwargs={"pk": self.pk})
@@ -103,8 +103,6 @@ class AdReview(models.Model):
 class UserReview(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    description = models.TextField(_("Review Description"))
     reviewed_by = models.ForeignKey(
         "accounts.User",
         verbose_name=_("Reviewed By"),
@@ -117,6 +115,8 @@ class UserReview(models.Model):
         related_name="reviewof",
         on_delete=models.CASCADE,
     )
+    description = models.TextField(_("Review Description"))
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:
         verbose_name = _("User Review")
@@ -132,8 +132,7 @@ class UserReview(models.Model):
 class AdBookmark(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
-    advertisement_id = models.ForeignKey(
+    advertisement = models.ForeignKey(
         "miam.Advertisement", verbose_name=_("Advertisement"), on_delete=models.CASCADE
     )
     bookmarked_by = models.ForeignKey(
@@ -141,6 +140,7 @@ class AdBookmark(models.Model):
         verbose_name=_("Reviewed By"),
         on_delete=models.CASCADE,
     )
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:
         verbose_name = _("Advertisement Bookmark")
@@ -156,12 +156,15 @@ class AdBookmark(models.Model):
 class PromoCode(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    seller = models.ForeignKey(
+        "accounts.SellerProfile", verbose_name=_("Seller"), on_delete=models.CASCADE
+    )
     advertisement = models.ForeignKey(
         "miam.Advertisement", verbose_name=_("Advertisement"), on_delete=models.CASCADE
     )
     name = models.CharField(_("Code Name"), max_length=50)
     percentage = models.IntegerField(_("Percentage"))
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:
         verbose_name = _("Promo Code")

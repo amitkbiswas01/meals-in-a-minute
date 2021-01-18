@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
-from .managers import CustomUserManager
+from accounts.managers import CustomUserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -17,7 +17,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_("Email"), max_length=255, unique=True)
     full_name = models.CharField(_("Name"), max_length=255)
     phone_regex = RegexValidator(
-        regex=r"^\+(?:[0-9] ?){6,14}[0-9]$",
+        regex=r"^[0-9]{0,14}$",
         message=_("Invalid Phone Number"),
     )
     phone_no = models.CharField(validators=[phone_regex], max_length=17, blank=True)
@@ -26,7 +26,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         max_length=50,
         choices=(("seller", "seller"), ("buyer", "buyer")),
     )
-
     created_at = models.DateTimeField(_("Joined"), auto_now_add=True)
 
     is_staff = models.BooleanField(default=False)
@@ -95,9 +94,6 @@ class BuyerProfile(models.Model):
         primary_key=True,
     )
     address = models.TextField(_("Address"), blank=True)
-    # last_order = models.ForeignKey(
-    #     "miam.Order", verbose_name=_("Last Order"), on_delete=models.CASCADE
-    # )
 
     class Meta:
         verbose_name = _("Buyer Profile")

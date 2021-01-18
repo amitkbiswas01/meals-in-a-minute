@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
     CreateView,
     ListView,
@@ -12,7 +13,36 @@ from accounts.models import SellerProfile
 from miam.models import Advertisement, AdReview
 
 
-class AdListView(ListView):
+class AdCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    """
+    Create new advertisement.
+    """
+
+    model = Advertisement
+    template_name = "miam/create_update.html"
+    fields = [
+        "title",
+        "price",
+        "location",
+        "category",
+        "description",
+        "photo",
+        "available_till",
+    ]
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        form.instance.seller = SellerProfile.objects.get(user=self.request.user)
+        return super(AdCreateView, self).form_valid(form)
+
+    def test_func(self):
+        return self.request.user.user_type == "seller"
+
+    def handle_no_permission(self):
+        return redirect("home")
+
+
+class AdListView(LoginRequiredMixin, ListView):
     """
     List all advertisements.
     """
@@ -30,7 +60,7 @@ class AdListView(ListView):
     ]
     queryset = Advertisement.objects.all()
     context_object_name = "ads"
-    paginate_by = 15
+    paginate_by = 10
 
     def get_ordering(self):
         sort_type = self.kwargs.get("sort_type", None)
@@ -42,6 +72,13 @@ class AdListView(ListView):
 
         return [order_by]
 
+    def get_queryset(self):
+        if self.request.user.user_type == "seller":
+            seller = SellerProfile.objects.get(user=self.request.user)
+            return super().get_queryset().filter(seller=seller)
+        else:
+            return super().get_queryset()
+
     def get_template_names(self):
         if self.request.user.user_type == "seller":
             return ["miam/seller_homepage.html"]
@@ -50,18 +87,10 @@ class AdListView(ListView):
         else:
             return ["landing_page.html"]
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and (
-            request.user.user_type == "seller" or request.user.user_type == "buyer"
-        ):
-            return super(AdListView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
 
-
-class AdListSearchView(ListView):
+class AdListSearchView(LoginRequiredMixin, ListView):
     """
-    Show searched values.
+    Show searched advertisements.
     """
 
     model = Advertisement
@@ -77,10 +106,9 @@ class AdListSearchView(ListView):
     ]
     queryset = Advertisement.objects.all()
     context_object_name = "ads"
-    paginate_by = 15
+    paginate_by = 10
 
     def get_queryset(self):
-
         locations = [
             "Dhaka",
             "Chattogram",
@@ -124,7 +152,7 @@ class AdListSearchView(ListView):
             return ["landing_page.html"]
 
 
-class AdDetailView(DetailView):
+class AdDetailView(LoginRequiredMixin, DetailView):
     """
     List single advertisement.
     """
@@ -136,20 +164,20 @@ class AdDetailView(DetailView):
         context = super(AdDetailView, self).get_context_data(**kwargs)
         context["current_url"] = f"/detailad/{self.kwargs['pk']}"
 
-        # reviews
+        # reviews added to context
         context["reviews"] = AdReview.objects.filter(
-            advertisement_id=self.kwargs["pk"]
+            advertisement=self.kwargs["pk"]
         ).order_by("-created_at")
 
         order_status = self.kwargs.get("order", None)
+
         if order_status == "placed":
             context["order"] = "placed"
-            return context
-        elif order_status == "failed":
+
+        if order_status == "failed":
             context["order"] = "failed"
-            return context
-        else:
-            return context
+
+        return context
 
     def get_template_names(self):
         if self.request.user.user_type == "seller":
@@ -159,45 +187,8 @@ class AdDetailView(DetailView):
         else:
             return ["landing_page.html"]
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and (
-            request.user.user_type == "seller" or request.user.user_type == "buyer"
-        ):
-            return super(AdDetailView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
 
-
-class AdCreateView(CreateView):
-    """
-    Create new advertisement.
-    """
-
-    model = Advertisement
-    template_name = "miam/create_update.html"
-    fields = [
-        "title",
-        "price",
-        "location",
-        "category",
-        "description",
-        "photo",
-        "available_till",
-    ]
-    success_url = reverse_lazy("home")
-
-    def form_valid(self, form):
-        form.instance.seller = SellerProfile.objects.get(user=self.request.user)
-        return super(AdCreateView, self).form_valid(form)
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.user_type == "seller":
-            return super(AdCreateView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
-
-
-class AdUpdateView(UpdateView):
+class AdUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     Update existing advertisement.
     """
@@ -215,14 +206,14 @@ class AdUpdateView(UpdateView):
     ]
     success_url = reverse_lazy("home")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.user_type == "seller":
-            return super(AdUpdateView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
+    def test_func(self):
+        return self.request.user.user_type == "seller"
+
+    def handle_no_permission(self):
+        return redirect("home")
 
 
-class AdDeleteView(DeleteView):
+class AdDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """
     Delete single advertisement.
     """
@@ -230,8 +221,8 @@ class AdDeleteView(DeleteView):
     model = Advertisement
     success_url = reverse_lazy("home")
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.user_type == "seller":
-            return super(AdDeleteView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
+    def test_func(self):
+        return self.request.user.user_type == "seller"
+
+    def handle_no_permission(self):
+        return redirect("home")

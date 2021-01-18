@@ -12,8 +12,8 @@
         <div class="card shadow mb-3 rounded-lg" style="width: 600px;">
             <div class="row no-gutters">
                 <div class="col-4">
-                    <img src="/media/{{bookmark.advertisement_id.photo}}" class="card-img"
-                        alt="{{bookmark.advertisement_id.title}}">
+                    <img src="/media/{{bookmark.advertisement.photo}}" class="card-img"
+                        alt="{{bookmark.advertisement.title}}">
                 </div>
                 <div class="col-8">
                     <div class="w-100 d-flex justify-content-end">
@@ -23,18 +23,18 @@
                     </div>
                     <div class="card-body mt-4">
                         <h4 class="card-title"><a
-                                href="{% url 'detailad' bookmark.advertisement_id.pk%}">{{bookmark.advertisement_id.title}}</a>
+                                href="{% url 'detailad' bookmark.advertisement.pk%}">{{bookmark.advertisement.title}}</a>
                         </h4>
                         <div class="pr-4 pb-2 mb-2 border-bottom d-flex justify-content-between align-items-center">
                             <h6 class="text-secondary card-subtitle">From
-                                <strong>{{bookmark.advertisement_id.location}}</strong> by
-                                <span class="text-danger">{{bookmark.advertisement_id.seller.company_name}}</span></h6>
-                            <h6 class="card-subtitle">Price: &#x9f3;{{bookmark.advertisement_id.price}}</h6>
+                                <strong>{{bookmark.advertisement.location}}</strong> by
+                                <span class="text-danger">{{bookmark.advertisement.seller.company_name}}</span></h6>
+                            <h6 class="card-subtitle">Price: &#x9f3;{{bookmark.advertisement.price}}</h6>
                         </div>
                         <p class="text-right card-text">
                             <small class="text-muted">
                                 <strong class="text-danger mr-1">Available till</strong>
-                                {{bookmark.advertisement_id.available_till}}
+                                {{bookmark.advertisement.available_till}}
                             </small>
                         </p>
                     </div>

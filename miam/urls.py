@@ -1,31 +1,35 @@
 from django.urls import path
 
 from miam.views import (
-    LandingView,
-    HomepageView,
-    # ad views
+    # advertisement views
     AdCreateView,
-    OrderCreateView,
     AdListView,
     AdListSearchView,
     AdDetailView,
     AdUpdateView,
     AdDeleteView,
+    # review views
     AdReviewCreateView,
-    # profile views
-    ProfileView,
     UserReviewCreateView,
+    # bookmark views
     AdBookmarkListView,
     AdBookmarkCreateView,
     AdBookmarkDeleteView,
+    # promocode views
     PromoCodeCreateView,
     PromoCodeListView,
     PromoCodeDeleteView,
+    # misc views
+    LandingView,
+    HomepageView,
+    ProfileView,
+    OrderCreateView,
 )
 
-url_basic = [
+url_misc = [
     path("", HomepageView.as_view(), name="home"),
     path("welcome/", LandingView.as_view(), name="landingpage"),
+    path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
 ]
 url_ads = [
     path("createad/", AdCreateView.as_view(), name="createad"),
@@ -39,6 +43,14 @@ url_ads = [
     path("updatead/<uuid:pk>/", AdUpdateView.as_view(), name="updatead"),
     path("deletead/<uuid:pk>/", AdDeleteView.as_view(), name="deletead"),
 ]
+url_reviews = [
+    path(
+        "createuserreview/<uuid:pk>",
+        UserReviewCreateView.as_view(),
+        name="create_userreview",
+    ),
+    path("createreview/<uuid:pk>", AdReviewCreateView.as_view(), name="cretereview"),
+]
 url_bookmarks = [
     path("bookmarks/", AdBookmarkListView.as_view(), name="bookmarks"),
     path("adbookmark/<uuid:pk>/", AdBookmarkCreateView.as_view(), name="adbookmark"),
@@ -51,18 +63,13 @@ url_bookmarks = [
 url_profiles = [
     path("detailprofile/", ProfileView.as_view(), name="profile"),
     path("detailprofile/<uuid:pk>", ProfileView.as_view(), name="otherprofile"),
-    path(
-        "createuserreview/<uuid:pk>",
-        UserReviewCreateView.as_view(),
-        name="create_userreview",
-    ),
 ]
-url_misc = [
-    path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
-    path("createreview/<uuid:pk>", AdReviewCreateView.as_view(), name="cretereview"),
+url_promos = [
     path("promocreate/<uuid:pk>", PromoCodeCreateView.as_view(), name="promocreate"),
     path("promocodes/", PromoCodeListView.as_view(), name="promocodes"),
     path("promodelete/<uuid:pk>", PromoCodeDeleteView.as_view(), name="promodelete"),
 ]
 
-urlpatterns = url_basic + url_ads + url_bookmarks + url_profiles + url_misc
+urlpatterns = (
+    url_misc + url_ads + url_reviews + url_bookmarks + url_profiles + url_promos
+)

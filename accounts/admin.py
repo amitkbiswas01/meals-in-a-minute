@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import User, SellerProfile, BuyerProfile
+from accounts.forms import CustomUserCreationForm, CustomUserChangeForm
+from accounts.models import User, SellerProfile, BuyerProfile
 
 
 @admin.register(User)
@@ -30,7 +30,6 @@ class CustomUserAdmin(UserAdmin):
         "is_staff",
     )
 
-    """CustomUserChangeForm fields"""
     fieldsets = (
         ("Information", {"fields": ("full_name", "email", "password", "user_type")}),
         (
@@ -43,7 +42,7 @@ class CustomUserAdmin(UserAdmin):
             },
         ),
     )
-    """CustomUserCreationForm fields"""
+
     add_fieldsets = (
         (
             "Information",
@@ -57,7 +56,6 @@ class CustomUserAdmin(UserAdmin):
                     "user_type",
                     "is_staff",
                     "is_active",
-
                 ),
             },
         ),
@@ -147,7 +145,6 @@ class BuyerProfileAdmin(admin.ModelAdmin):
     list_display = (
         "get_full_name",
         "address",
-        # "last_order",
     )
 
     def get_full_name(self, instance):

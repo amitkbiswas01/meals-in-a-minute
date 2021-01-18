@@ -4,12 +4,12 @@ from django.core.validators import RegexValidator
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 
-from .models import User, SellerProfile, BuyerProfile
+from accounts.models import User, SellerProfile, BuyerProfile
 
 
 class CustomUserCreationForm(UserCreationForm):
     """
-    Custom registration form fo adminsite.
+    Custom registration form for adminsite.
     """
 
     class Meta(UserCreationForm.Meta):
@@ -34,7 +34,7 @@ class SellerSignupForm(SignupForm):
 
     full_name = forms.CharField(label=_("Full Name"), max_length=255, required=True)
     phone_regex = RegexValidator(
-        regex=r"^\+(?:[0-9] ?){6,14}[0-9]$", message=_("Invalid Phone Number")
+        regex=r"^[0-9]{0,14}$", message=_("Invalid Phone Number")
     )
     phone_no = forms.CharField(
         label=_("Phone Number"), validators=[phone_regex], max_length=17, required=True
@@ -81,7 +81,7 @@ class BuyerSignupForm(SignupForm):
 
     full_name = forms.CharField(label=_("Full Name"), max_length=255, required=True)
     phone_regex = RegexValidator(
-        regex=r"^\+(?:[0-9] ?){6,14}[0-9]$", message=_("Invalid Phone Number")
+        regex=r"^[0-9]{0,14}$", message=_("Invalid Phone Number")
     )
     phone_no = forms.CharField(
         label=_("Phone Number"), validators=[phone_regex], max_length=17, required=False

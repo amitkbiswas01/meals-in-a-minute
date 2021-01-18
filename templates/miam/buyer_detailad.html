@@ -16,11 +16,12 @@
             </button>
         </div>
     </div>
-    {% elif order == "falied" %}
+    {% elif order == "failed" %}
     <div class="row mt-2 w-100 d-flex justify-content-end">
         <div class="p-5 alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Ordering failed! Please try again 😔</strong>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"
+                onClick="location.href='{{current_url}}'">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>

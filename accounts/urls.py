@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import SellerSignupView, BuyerSignupView, SignupPageView
+from accounts.views import SellerSignupView, BuyerSignupView, SignupPageView
 
 urlpatterns = [
     path("", SignupPageView.as_view(), name="account_signup"),
