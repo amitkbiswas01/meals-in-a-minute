@@ -1,0 +1,26 @@
+{% extends 'miam/miam_base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %} Create Promo Code {% endblock title %}
+
+{% block content %}
+<section class="container my-5 d-flex justify-content-center align-items-center" style="min-height: 90vh">
+    <div class="bg-white rounded-lg p-4" style="width: 25rem;">
+        <form method="post">
+            {% csrf_token %}
+            <h1 class="w-100 text-center mb-4">Create Promo Code</h1>
+            <div class="form-row">
+                <div class="w-100 form-group">
+                    {{ form.name|as_crispy_field }}
+                </div>
+                <div class="w-100 form-group">
+                    {{ form.percentage|as_crispy_field }}
+                </div>
+            </div>
+            <button type="submit" class="w-100 btn btn-success">Create New Promo Code</button>
+        </form>
+    </div>
+</section>
+{% endblock content %}

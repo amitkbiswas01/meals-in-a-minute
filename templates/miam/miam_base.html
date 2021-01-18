@@ -58,6 +58,11 @@
                     <a class="nav-link text-dark" href="{% url 'bookmarks'%}">Bookmarks</a>
                 </li>
                 {% endif %}
+                {% if user.user_type == "seller" %}
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{% url 'promocodes'%}">Promo Codes</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{% url 'profile'%}">Profile</a>
                 </li>

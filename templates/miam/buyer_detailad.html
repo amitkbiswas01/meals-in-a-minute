@@ -49,22 +49,26 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="orderWithUsLabel">Select Quantity</h5>
+                                    <h5 class="modal-title" id="orderWithUsLabel">Select Details</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body d-flex justify-content-center">
-                                    <form class="w-75 d-flex" action="{% url 'createorder' ad.pk %}" method="post">
+                                    <form class="w-75" action="{% url 'createorder' ad.pk %}" method="post">
                                         {% csrf_token %}
-                                        <input class="mr-2 form-control" type="number" min=0 name="quantity"
-                                            value="{{quantity}}">
-                                        <button class="btn btn-info" type="submit">Order!</button>
+                                        <label class="mb-1" for="quantity">Quantity*</label>
+                                        <input class="form-control mb-2" type="number" min=1 name="quantity"
+                                            value="{{quantity}}" required>
+                                        <label class="mb-1" for="promocode">Promo Code*</label>
+                                        <input class="form-control mb-2" type="text" name="promocode"
+                                            value="{{promocode}}">
+                                        <button class="w-100 btn btn-info" type="submit">Order!</button>
                                     </form>
                                 </div>
                                 <div class="modal-footer">
                                     <p class="w-100 text-muted text-center">
-                                        Enter any positive number. Depends on product stock.
+                                        Availability depends on product stock. Enter valid Promo Code.
                                     </p>
                                 </div>
                             </div>

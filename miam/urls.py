@@ -18,16 +18,17 @@ from miam.views import (
     AdBookmarkListView,
     AdBookmarkCreateView,
     AdBookmarkDeleteView,
+    PromoCodeCreateView,
+    PromoCodeListView,
+    PromoCodeDeleteView,
 )
 
-url_misc = [
+url_basic = [
     path("", HomepageView.as_view(), name="home"),
     path("welcome/", LandingView.as_view(), name="landingpage"),
 ]
 url_ads = [
     path("createad/", AdCreateView.as_view(), name="createad"),
-    path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
-    path("createreview/<uuid:pk>", AdReviewCreateView.as_view(), name="cretereview"),
     path("listad/", AdListView.as_view(), name="listad"),
     path("listad/<str:sort_type>/", AdListView.as_view(), name="listad"),
     path(
@@ -56,5 +57,12 @@ url_profiles = [
         name="create_userreview",
     ),
 ]
+url_misc = [
+    path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
+    path("createreview/<uuid:pk>", AdReviewCreateView.as_view(), name="cretereview"),
+    path("promocreate/<uuid:pk>", PromoCodeCreateView.as_view(), name="promocreate"),
+    path("promocodes/", PromoCodeListView.as_view(), name="promocodes"),
+    path("promodelete/<uuid:pk>", PromoCodeDeleteView.as_view(), name="promodelete"),
+]
 
-urlpatterns = url_misc + url_ads + url_bookmarks + url_profiles
+urlpatterns = url_basic + url_ads + url_bookmarks + url_profiles + url_misc

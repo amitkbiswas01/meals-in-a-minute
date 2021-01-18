@@ -1,5 +1,3 @@
-from urllib.parse import urlencode
-from django.http import request
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,13 +7,19 @@ from django.views.generic import (
     RedirectView,
     CreateView,
     ListView,
-    DetailView,
-    UpdateView,
     DeleteView,
 )
 
+from miam.ad_view import *
 from accounts.models import SellerProfile, BuyerProfile, User
-from miam.models import Advertisement, Order, AdReview, UserReview, AdBookmark
+from miam.models import (
+    Advertisement,
+    Order,
+    AdReview,
+    UserReview,
+    AdBookmark,
+    PromoCode,
+)
 
 
 class LandingView(TemplateView):
@@ -37,191 +41,6 @@ class HomepageView(RedirectView):
             return reverse("landingpage", args=args, kwargs=kwargs)
 
 
-class AdListView(ListView):
-    """
-    List all advertisements.
-    """
-
-    model = Advertisement
-    fields = [
-        "title",
-        "price",
-        "location",
-        "category",
-        "description",
-        "photo",
-        "available_from",
-        "available_till",
-    ]
-    queryset = Advertisement.objects.all()
-    context_object_name = "ads"
-    paginate_by = 15
-
-    def get_ordering(self):
-        sort_type = self.kwargs.get("sort_type", None)
-
-        if sort_type is None:
-            order_by = "-available_from"
-        else:
-            order_by = f"{sort_type}"
-
-        return [order_by]
-
-    def get_template_names(self):
-        if self.request.user.user_type == "seller":
-            return ["miam/seller_homepage.html"]
-        elif self.request.user.user_type == "buyer":
-            return ["miam/buyer_homepage.html"]
-        else:
-            return ["landing_page.html"]
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and (
-            request.user.user_type == "seller" or request.user.user_type == "buyer"
-        ):
-            return super(AdListView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
-
-
-class AdListSearchView(ListView):
-    """
-    Show searched values.
-    """
-
-    model = Advertisement
-    fields = [
-        "title",
-        "price",
-        "location",
-        "category",
-        "description",
-        "photo",
-        "available_from",
-        "available_till",
-    ]
-    queryset = Advertisement.objects.all()
-    context_object_name = "ads"
-    paginate_by = 15
-
-    def get_queryset(self):
-
-        locations = [
-            "Dhaka",
-            "Chattogram",
-            "Khulna",
-            "Rajshahi",
-            "Barisal",
-            "Sylhet",
-            "Rangpur",
-            "Mymensingh",
-        ]
-        categories = [
-            "bengali_food",
-            "street_food",
-            "sea_food",
-            "drinks",
-            "sweets",
-            "bakery",
-        ]
-
-        keyword = self.kwargs.get("keyword", None)
-
-        if keyword is None:
-            return super().get_queryset()
-        elif keyword in locations:
-            return super().get_queryset().filter(location=keyword)
-        elif keyword in categories:
-            return super().get_queryset().filter(category=keyword)
-        else:
-            keyword = self.request.GET.get("searched_value", None)
-            if keyword is not None:
-                return super().get_queryset().filter(title__icontains=keyword)
-            else:
-                return super().get_queryset()
-
-    def get_template_names(self):
-        if self.request.user.user_type == "seller":
-            return ["miam/seller_homepage.html"]
-        elif self.request.user.user_type == "buyer":
-            return ["miam/buyer_homepage.html"]
-        else:
-            return ["landing_page.html"]
-
-
-class AdDetailView(DetailView):
-    """
-    List single advertisement.
-    """
-
-    model = Advertisement
-    context_object_name = "ad"
-
-    def get_context_data(self, **kwargs):
-        context = super(AdDetailView, self).get_context_data(**kwargs)
-        context["current_url"] = f"/detailad/{self.kwargs['pk']}"
-
-        # reviews
-        context["reviews"] = AdReview.objects.filter(
-            advertisement_id=self.kwargs["pk"]
-        ).order_by("-created_at")
-
-        order_status = self.kwargs.get("order", None)
-        if order_status == "placed":
-            context["order"] = "placed"
-            return context
-        elif order_status == "failed":
-            context["order"] = "failed"
-            return context
-        else:
-            return context
-
-    def get_template_names(self):
-        if self.request.user.user_type == "seller":
-            return ["miam/seller_detailad.html"]
-        elif self.request.user.user_type == "buyer":
-            return ["miam/buyer_detailad.html"]
-        else:
-            return ["landing_page.html"]
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and (
-            request.user.user_type == "seller" or request.user.user_type == "buyer"
-        ):
-            return super(AdDetailView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
-
-
-class AdCreateView(CreateView):
-    """
-    Create new advertisement.
-    """
-
-    model = Advertisement
-    template_name = "miam/create_update.html"
-    fields = [
-        "title",
-        "price",
-        "location",
-        "category",
-        "description",
-        "photo",
-        "available_till",
-    ]
-    success_url = reverse_lazy("home")
-
-    def form_valid(self, form):
-        form.instance.seller = SellerProfile.objects.get(user=self.request.user)
-        return super(AdCreateView, self).form_valid(form)
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.user_type == "seller":
-            return super(AdCreateView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
-
-
 class OrderCreateView(View):
     """
     Create new order.
@@ -232,55 +51,33 @@ class OrderCreateView(View):
         try:
             buyer = BuyerProfile.objects.get(user=request.user)
             advertisement = Advertisement.objects.get(id=self.kwargs["pk"])
-            quantity = request.POST.get("quantity", 1)
+            quantity = request.POST.get("quantity")
+            promocode = request.POST.get("promocode")
 
-            Order(buyer=buyer, advertisement=advertisement, quantity=quantity).save()
+            total_price = advertisement.price * int(quantity)
+
+            try:
+                promocode = PromoCode.objects.get(name=promocode)
+                total_price = total_price - ((total_price * promocode.percentage) / 100)
+                Order(
+                    buyer=buyer,
+                    advertisement=advertisement,
+                    quantity=quantity,
+                    total_price=total_price,
+                ).save()
+            except:
+                Order(
+                    buyer=buyer,
+                    advertisement=advertisement,
+                    quantity=quantity,
+                    total_price=total_price,
+                ).save()
 
             url = f"/detailad/{self.kwargs['pk']}/placed"
             return redirect(url)
         except ObjectDoesNotExist:
             url = f"/detailad/{self.kwargs['pk']}/failed"
             return redirect(url)
-
-
-class AdUpdateView(UpdateView):
-    """
-    Update existing advertisement.
-    """
-
-    model = Advertisement
-    template_name = "miam/create_update.html"
-    fields = [
-        "title",
-        "price",
-        "location",
-        "category",
-        "description",
-        "photo",
-        "available_till",
-    ]
-    success_url = reverse_lazy("home")
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.user_type == "seller":
-            return super(AdUpdateView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
-
-
-class AdDeleteView(DeleteView):
-    """
-    Delete single advertisement.
-    """
-
-    model = Advertisement
-    success_url = reverse_lazy("home")
-
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.is_authenticated and request.user.user_type == "seller":
-            return super(AdDeleteView, self).dispatch(request, *args, **kwargs)
-        else:
-            return redirect("home")
 
 
 class AdBookmarkCreateView(View):
@@ -460,3 +257,72 @@ class UserReviewCreateView(CreateView):
         except ObjectDoesNotExist:
             url = f"/detailprofile/{self.kwargs['pk']}"
             return redirect(url)
+
+
+class PromoCodeCreateView(CreateView):
+    model = PromoCode
+
+    template_name = "miam/create_promocode.html"
+    fields = [
+        "name",
+        "percentage",
+    ]
+    success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        form.instance.advertisement = Advertisement.objects.get(id=self.kwargs["pk"])
+        return super(PromoCodeCreateView, self).form_valid(form)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.user_type == "seller":
+            return super(PromoCodeCreateView, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect("home")
+
+
+class PromoCodeListView(ListView):
+    """
+    List all Promo Codes.
+    """
+
+    model = PromoCode
+    fields = [
+        "name",
+        "percentage",
+        "created_at",
+    ]
+    queryset = PromoCode.objects.all()
+    context_object_name = "promos"
+    paginate_by = 15
+
+    def get_template_names(self):
+        if self.request.user.user_type == "seller":
+            return ["miam/promocode_list.html"]
+        else:
+            return redirect("home")
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and (
+            request.user.user_type == "seller" or request.user.user_type == "buyer"
+        ):
+            return super(PromoCodeListView, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect("home")
+
+
+class PromoCodeDeleteView(DeleteView):
+    """
+    Delete single promo.
+    """
+
+    model = PromoCode
+    success_url = reverse_lazy("promocodes")
+
+    def get(self, *args, **kwargs):
+        return self.post(*args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.user_type == "seller":
+            return super(PromoCodeDeleteView, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect("home")

@@ -74,7 +74,7 @@
                             <strong class="text-danger">
                                 <a href="{% url 'otherprofile' order.advertisement.seller.user.pk%}"
                                     class="text-danger">{{order.advertisement.seller.company_name}}
-                                </a></strong></p>
+                                </a></strong><span class="ml-4">for &#x9f3;{{order.total_price}}</span></p>
                         {% else %}
                         <p class="mb-1"><strong><a class="text-danger"
                                     href="{% url 'otherprofile'  order.buyer.user.pk%}">{{order.buyer.user.full_name}}</a></strong>

@@ -1,0 +1,55 @@
+{% extends 'miam/miam_base.html' %}
+
+
+{% block title %} Promo Code List {% endblock title %}
+
+{% block content %}
+
+<section class="container my-5 p-5 elem-bg rounded-lg d-flex flex-column justify-content-center align-items-center"
+    style="min-height: 90vh">
+    <table class="w-100 bg-white text-center table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Percentage</th>
+                <th>Created at</th>
+                <th>Remove</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for promo in promos %}
+            <tr>
+                <td>{{promo.name}}</td>
+                <td>{{ promo.percentage }}</td>
+                <td>{{ promo.created_at }}</td>
+                <td class="text-center"><a class="btn btn-danger" href="{% url 'promodelete' promo.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if is_paginated %}
+    <ul class="pagination">
+        {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in paginator.page_range %}
+        {% if page_obj.number == i %}
+        <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+        {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+        {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+    {% endif %}
+</section>
+
+{% endblock content %}
