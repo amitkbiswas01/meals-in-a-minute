@@ -16,6 +16,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         textarea {
             resize: none;
@@ -52,6 +53,11 @@
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{% url 'listad' %}">All Ads</a>
                 </li>
+                {% if user.user_type == "buyer" %}
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="{% url 'bookmarks'%}">Bookmarks</a>
+                </li>
+                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="{% url 'profile'%}">Profile</a>
                 </li>

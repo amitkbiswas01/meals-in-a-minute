@@ -3,7 +3,6 @@ from django.urls import path
 from miam.views import (
     LandingView,
     HomepageView,
-    SellerHomepageView,
     # ad views
     AdCreateView,
     OrderCreateView,
@@ -16,12 +15,14 @@ from miam.views import (
     # profile views
     ProfileView,
     UserReviewCreateView,
+    AdBookmarkListView,
+    AdBookmarkCreateView,
+    AdBookmarkDeleteView,
 )
 
 url_misc = [
     path("", HomepageView.as_view(), name="home"),
     path("welcome/", LandingView.as_view(), name="landingpage"),
-    path("sellerhome/", SellerHomepageView.as_view(), name="sellerhome"),
 ]
 url_ads = [
     path("createad/", AdCreateView.as_view(), name="createad"),
@@ -37,6 +38,15 @@ url_ads = [
     path("updatead/<uuid:pk>/", AdUpdateView.as_view(), name="updatead"),
     path("deletead/<uuid:pk>/", AdDeleteView.as_view(), name="deletead"),
 ]
+url_bookmarks = [
+    path("bookmarks/", AdBookmarkListView.as_view(), name="bookmarks"),
+    path("adbookmark/<uuid:pk>/", AdBookmarkCreateView.as_view(), name="adbookmark"),
+    path(
+        "adbookmarkdelete/<uuid:pk>/",
+        AdBookmarkDeleteView.as_view(),
+        name="adbookmarkdelete",
+    ),
+]
 url_profiles = [
     path("detailprofile/", ProfileView.as_view(), name="profile"),
     path("detailprofile/<uuid:pk>", ProfileView.as_view(), name="otherprofile"),
@@ -47,4 +57,4 @@ url_profiles = [
     ),
 ]
 
-urlpatterns = url_misc + url_ads + url_profiles
+urlpatterns = url_misc + url_ads + url_bookmarks + url_profiles

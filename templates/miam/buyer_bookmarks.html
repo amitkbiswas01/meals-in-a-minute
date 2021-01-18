@@ -1,0 +1,47 @@
+{% extends 'miam/miam_base.html' %}
+
+{% load static %}
+
+{% block title %} Buyer Bookmarks {% endblock title %}
+
+{% block content %}
+<section class="container shadow-lg pt-2 pb-5 my-5 elem-bg rounded-lg">
+    <div class="w-100 d-flex flex-column justify-content-center align-items-center">
+        <h2 class="my-4">Bookmarks</h2>
+        {% for bookmark in ads %}
+        <div class="card shadow mb-3 rounded-lg" style="width: 600px;">
+            <div class="row no-gutters">
+                <div class="col-4">
+                    <img src="/media/{{bookmark.advertisement_id.photo}}" class="card-img"
+                        alt="{{bookmark.advertisement_id.title}}">
+                </div>
+                <div class="col-8">
+                    <div class="w-100 d-flex justify-content-end">
+                        <a class="mt-2 mr-4" href="{% url 'adbookmarkdelete' bookmark.pk %}">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                    <div class="card-body mt-4">
+                        <h4 class="card-title"><a
+                                href="{% url 'detailad' bookmark.advertisement_id.pk%}">{{bookmark.advertisement_id.title}}</a>
+                        </h4>
+                        <div class="pr-4 pb-2 mb-2 border-bottom d-flex justify-content-between align-items-center">
+                            <h6 class="text-secondary card-subtitle">From
+                                <strong>{{bookmark.advertisement_id.location}}</strong> by
+                                <span class="text-danger">{{bookmark.advertisement_id.seller.company_name}}</span></h6>
+                            <h6 class="card-subtitle">Price: &#x9f3;{{bookmark.advertisement_id.price}}</h6>
+                        </div>
+                        <p class="text-right card-text">
+                            <small class="text-muted">
+                                <strong class="text-danger mr-1">Available till</strong>
+                                {{bookmark.advertisement_id.available_till}}
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock content %}

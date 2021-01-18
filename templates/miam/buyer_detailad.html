@@ -105,7 +105,10 @@
                 <h4>Description</h4>
                 <p>{{ad.description}}</p>
             </div>
-            <p class="mt-2 w-100 text-right text-muted">available till <strong>{{ad.available_till}}</strong></p>
+            <div class="mt-2 w-100 d-flex justify-content-between">
+                <a href="{% url 'adbookmark' ad.pk%}">Bookmark this</a>
+                <p class="text-muted">available till <strong>{{ad.available_till}}</strong></p>
+            </div>
         </div>
     </div>
     <div class="row">

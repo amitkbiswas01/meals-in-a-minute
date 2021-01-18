@@ -15,7 +15,7 @@ from django.views.generic import (
 )
 
 from accounts.models import SellerProfile, BuyerProfile, User
-from miam.models import Advertisement, Order, AdReview, UserReview
+from miam.models import Advertisement, Order, AdReview, UserReview, AdBookmark
 
 
 class LandingView(TemplateView):
@@ -193,10 +193,6 @@ class AdDetailView(DetailView):
             return redirect("home")
 
 
-class SellerHomepageView(TemplateView):
-    template_name = "miam/seller_homepage.html"
-
-
 class AdCreateView(CreateView):
     """
     Create new advertisement.
@@ -287,6 +283,68 @@ class AdDeleteView(DeleteView):
             return redirect("home")
 
 
+class AdBookmarkCreateView(View):
+    model = AdBookmark
+
+    def get(self, request, *args, **kwargs):
+        advertisement_id = Advertisement.objects.get(id=self.kwargs.get("pk"))
+        buyer = BuyerProfile.objects.get(user=request.user)
+        AdBookmark(bookmarked_by=buyer, advertisement_id=advertisement_id).save()
+
+        return redirect(request.get_full_path)
+
+
+class AdBookmarkListView(ListView):
+    """
+    List all bookmarked advertisements.
+    """
+
+    model = AdBookmark
+    fields = [
+        "bookmarked_by",
+        "advertisement_id",
+    ]
+    queryset = AdBookmark.objects.all()
+    context_object_name = "ads"
+    paginate_by = 15
+
+    def get_queryset(self):
+        buyer = BuyerProfile.objects.get(user=self.request.user)
+        return AdBookmark.objects.filter(bookmarked_by=buyer)
+
+    def get_template_names(self):
+        if self.request.user.user_type == "buyer":
+            return ["miam/buyer_bookmarks.html"]
+        else:
+            return redirect("home")
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and (
+            request.user.user_type == "seller" or request.user.user_type == "buyer"
+        ):
+            return super(AdBookmarkListView, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect("home")
+
+
+class AdBookmarkDeleteView(DeleteView):
+    """
+    Delete single bookmark.
+    """
+
+    model = AdBookmark
+    success_url = reverse_lazy("bookmarks")
+
+    def get(self, *args, **kwargs):
+        return self.post(*args, **kwargs)
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.user_type == "buyer":
+            return super(AdBookmarkDeleteView, self).dispatch(request, *args, **kwargs)
+        else:
+            return redirect("home")
+
+
 class ProfileView(TemplateView):
     template_name = "miam/profile.html"
 
@@ -302,6 +360,7 @@ class ProfileView(TemplateView):
                     buyer_profile = BuyerProfile.objects.get(user=self.request.user)
 
                     context["user_type"] = "buyer"
+                    context["own_profile"] = True
                     context["buyer_profile"] = buyer_profile
                     context["orders"] = Order.objects.filter(
                         buyer=buyer_profile
@@ -314,6 +373,7 @@ class ProfileView(TemplateView):
                     seller_profile = SellerProfile.objects.get(user=self.request.user)
 
                     context["user_type"] = "seller"
+                    context["own_profile"] = True
                     context["seller_profile"] = seller_profile
                     context["orders"] = Order.objects.filter(
                         advertisement__seller=seller_profile
@@ -331,8 +391,8 @@ class ProfileView(TemplateView):
                     seller_profile = SellerProfile.objects.get(user=user)
 
                     context["user_type"] = "seller"
+                    context["own_profile"] = False
                     context["seller_profile"] = seller_profile
-                    context["orders"] = False
                     context["reviews"] = UserReview.objects.filter(
                         review_of=user
                     ).order_by("-created_at")
@@ -342,8 +402,8 @@ class ProfileView(TemplateView):
                     buyer_profile = BuyerProfile.objects.get(user=user)
 
                     context["user_type"] = "buyer"
+                    context["own_profile"] = False
                     context["buyer_profile"] = buyer_profile
-                    context["orders"] = False
                     context["reviews"] = UserReview.objects.filter(
                         review_of=user
                     ).order_by("-created_at")

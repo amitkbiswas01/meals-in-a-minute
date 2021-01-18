@@ -126,3 +126,27 @@ class UserReview(models.Model):
 
     def get_absolute_url(self):
         return reverse("userreview_detail", kwargs={"pk": self.pk})
+
+
+class AdBookmark(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
+    advertisement_id = models.ForeignKey(
+        "miam.Advertisement", verbose_name=_("Advertisement"), on_delete=models.CASCADE
+    )
+    bookmarked_by = models.ForeignKey(
+        "accounts.Buyerprofile",
+        verbose_name=_("Reviewed By"),
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = _("Advertisement Bookmark")
+        verbose_name_plural = _("Advertisement Bookmarks")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("adbookmark_detail", kwargs={"pk": self.pk})
