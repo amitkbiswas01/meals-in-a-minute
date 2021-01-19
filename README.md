@@ -1,6 +1,8 @@
-## **Meals in a Minute**
+## Meals in a Minute
 
-### **Meals in a Minute** is an online food-selling marketplace made using **Django, Bootstrap4 and PostgreSQL.** I did this project as part of the course System Analysis and Design at the university. Features that I have Implemented here are,
+### System Analysis and Design Lab project using Django, Bootstrap4 and PostgreSQL
+
+Meals in a minute is an online food-selling marketplace where users can sign up to buy/sell food items for free! Some features that I have implemented here are,
 
 - Seller and Buyer entity with separate profile information.
 - Option for seller to,
@@ -17,7 +19,7 @@
   - Review ads and sellers check other reviews.
   - Bookmark ads.
 
-### **Tech stack**
+### Tech stack
 
 - Django
   - allauth
@@ -47,7 +49,7 @@ Run the project using ,
 python manage.py runserver
 ```
 
-### Some of the screenshots from the project
+## Screenshots
 
 ### Landing Page
 
@@ -87,5 +89,3 @@ python manage.py runserver
 - <a href="https://www.freepik.com/free-vector/indian-food-set_9462579.htm#page=1&query=indian%20food&position=4">Food vector created by macrovector</a>
 
 - <a href='https://www.freepik.com/photos/frame'>Frame photo created by freepik</a>
-
-# Drop a star if this one helped you by any means, much appreciated :)
