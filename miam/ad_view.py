@@ -139,7 +139,15 @@ class AdListSearchView(LoginRequiredMixin, ListView):
         else:
             keyword = self.request.GET.get("searched_value", None)
             if keyword is not None:
-                return super().get_queryset().filter(title__icontains=keyword)
+                if self.request.user.user_type == "seller":
+                    seller = SellerProfile.objects.get(user=self.request.user)
+                    return (
+                        super()
+                        .get_queryset()
+                        .filter(seller=seller, title__icontains=keyword)
+                    )
+                else:
+                    return super().get_queryset().filter(title__icontains=keyword)
             else:
                 return super().get_queryset()
 
