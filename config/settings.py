@@ -64,10 +64,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+"""
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
+"""
+
+"""
+DBHOST is the server name, not the site name.
+"""
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DBNAME"),
+        "HOST": os.getenv("DBHOST"),
+        "USER": os.getenv("DBUSER"),
+        "PASSWORD": os.getenv("DBPASS"),
     }
 }
 
