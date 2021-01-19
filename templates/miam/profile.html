@@ -74,7 +74,18 @@
                             <strong class="text-danger">
                                 <a href="{% url 'otherprofile' order.advertisement.seller.user.pk%}"
                                     class="text-danger">{{order.advertisement.seller.company_name}}
-                                </a></strong><span class="ml-4">for &#x9f3;{{order.total_price}}</span></p>
+                                </a>
+                            </strong><span class="ml-4">for &#x9f3;{{order.total_price}}</span>
+                        </p>
+                        <h6 class="text-muted">Delivery Status:
+                            {% if order.is_delivered %}
+                            <strong class="text-success">Done <i class="fa fa-thumbs-up"
+                                    aria-hidden="true"></i></strong>
+                            {% else %}
+                            <strong class="text-danger">In Progress <i class="fa fa-thumbs-down"
+                                    aria-hidden="true"></i></strong>
+                            {% endif %}
+                        </h6>
                         {% else %}
                         <p class="mb-1"><strong><a class="text-danger"
                                     href="{% url 'otherprofile'  order.buyer.user.pk%}">{{order.buyer.user.full_name}}</a></strong>
@@ -82,8 +93,12 @@
                             <strong>{{order.quantity}}</strong>
                             {{order.advertisement.title}}
                         </p>
+                        {% if order.is_delivered %}
+                        <h6 class="text-success font-weight-bold">Delivery Done</h6>
+                        {% else %}
+                        <a class="btn btn-success" href="{% url 'changeorder' order.pk %}">Delivery Done</a>
                         {% endif %}
-                        <small class="text-muted">Delivary status goes here</small>
+                        {% endif %}
                     </li>
                     {% endfor %}
                 </ul>

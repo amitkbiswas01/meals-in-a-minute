@@ -40,6 +40,7 @@ class OrderAdmin(admin.ModelAdmin):
         "get_title",
         "quantity",
         "total_price",
+        "is_delivered",
         "created_at",
     )
 

@@ -8,8 +8,8 @@
 <section class="container d-flex flex-column justify-content-center">
     {% if order == "placed" %}
     <div class="row mt-2 w-100 d-flex justify-content-end">
-        <div class="p-5 alert alert-success alert-dismissible fade show" role="alert">
-            <strong>Order Placed Successfully 😁</strong>
+        <div class="w-75 py-4 px-5 alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Order Placed Successfully! Please pay Cash On Delivery. Check Delivery Status for update 😁</strong>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"
                 onClick="location.href='{{current_url}}'">
                 <span aria-hidden="true">&times;</span>
@@ -18,7 +18,7 @@
     </div>
     {% elif order == "failed" %}
     <div class="row mt-2 w-100 d-flex justify-content-end">
-        <div class="p-5 alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="w-75 py-4 px-5 alert alert-danger alert-dismissible fade show" role="alert">
             <strong>Ordering failed! Please try again 😔</strong>
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"
                 onClick="location.href='{{current_url}}'">

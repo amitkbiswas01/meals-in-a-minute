@@ -24,12 +24,14 @@ from miam.views import (
     HomepageView,
     ProfileView,
     OrderCreateView,
+    OrderUpdateView,
 )
 
 url_misc = [
     path("", HomepageView.as_view(), name="home"),
     path("welcome/", LandingView.as_view(), name="landingpage"),
     path("createorder/<uuid:pk>", OrderCreateView.as_view(), name="createorder"),
+    path("changeorder/<uuid:pk>", OrderUpdateView.as_view(), name="changeorder"),
 ]
 url_ads = [
     path("createad/", AdCreateView.as_view(), name="createad"),

@@ -62,6 +62,7 @@ class Order(models.Model):
     )
     quantity = models.IntegerField(_("Quantity"))
     total_price = models.IntegerField(_("Total Price"))
+    is_delivered = models.BooleanField(_("Is Delivered"), default=False)
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
 
     class Meta:

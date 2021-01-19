@@ -167,6 +167,25 @@ class OrderCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         return redirect("home")
 
 
+class OrderUpdateView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """
+    Update order delivery status.
+    """
+
+    def get(self, request, *args, **kwargs):
+        order = Order.objects.get(id=self.kwargs.get("pk"))
+        order.is_delivered = True
+        order.save()
+
+        return redirect("profile")
+
+    def test_func(self):
+        return self.request.user.user_type == "seller"
+
+    def handle_no_permission(self):
+        return redirect("home")
+
+
 class AdBookmarkCreateView(LoginRequiredMixin, UserPassesTestMixin, View):
     """
     Create advertisement bookmark.
